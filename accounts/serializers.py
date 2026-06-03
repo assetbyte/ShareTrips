@@ -39,6 +39,5 @@ class RegistrationSerializer(serializers.ModelSerializer):
         password = validated_data.pop('password')
         #запрос от фронта на создание юзера и профиля, сначала создаем юзера, потом профиль
         user = User.objects.create_user(username=username, password=password, email=email)
-        
         profile = Profile.objects.create(user=user, **validated_data)
         return profile
