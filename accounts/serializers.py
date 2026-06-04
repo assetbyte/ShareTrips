@@ -22,6 +22,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = ['id', 'user_sender', 'user_receiver', 'rating', 'comment', 'created_at']
+        
 
 #post        
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -41,3 +42,12 @@ class RegistrationSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(username=username, password=password, email=email)
         profile = Profile.objects.create(user=user, **validated_data)
         return profile
+#post
+class ReviewCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = ['id', 'user_receiver', 'rating', 'comment'] #created_at
+        #user sender через user_sender = self.request.user получу
+        
+        
+        

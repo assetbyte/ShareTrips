@@ -1,11 +1,16 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, viewsets
 from rest_framework.permissions import AllowAny
 from .serializers import RegistrationSerializer
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
+from .models import Review
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from .serializers import ReviewSerializer, ReviewCreateSerializer
+from rest_framework.decorators import authentication_classes
+from rest_framework.authentication import TokenAuthentication
 
 
 class RegistrationView(APIView):
@@ -42,3 +47,19 @@ class LoginView(APIView):
         return Response({
             'error': 'Invalid Credentials'
         }, status=status.HTTP_400_BAD_REQUEST)
+        
+# review view
+class ReviewView(viewsets.ModelViewSet):
+    queryset = Review.objects.all().order_by('-created_at')
+    permission_classes = [IsAuthenticatedOrReadOnly] #смотреть отзывы могут все
+    authentication_classes = [TokenAuthentication]
+    
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return ReviewCreateSerializer
+        return ReviewSerializer
+    
+    def perform_create(self, serializer):
+        serializer.save(user_sender=self.request.user)
+        
+        

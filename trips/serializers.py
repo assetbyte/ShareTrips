@@ -4,7 +4,6 @@ from accounts.serializers import UserSerializer
 #get посмотреть поездки
 class TripSerializer(serializers.ModelSerializer):
     creator = UserSerializer(read_only=True)    
-    
     class Meta:
         model = Trip
         fields = [
@@ -29,7 +28,6 @@ class TripApplicationSerializer(serializers.ModelSerializer):
         fields = ['id', 'trip', 'applier', 'status', 'applied_at']
         
 #post подать заявки на поездку
-
 class TripApplicationCreateSeriazlier(serializers.ModelSerializer):
     class Meta:
         model = TripApplication
