@@ -61,7 +61,7 @@
       </div>
     </div>
 
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 20px;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 20px;">
       <div>
         <label style="display: block; margin-bottom: 6px; font-size: 14px; font-weight: 500; color: #4b5563;">Travel date:</label>
         <input type="date" [(ngModel)]="newTrip.departure_date" style="width: 100%; padding: 9px 12px; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
@@ -77,6 +77,10 @@
       <div>
         <label style="display: block; margin-bottom: 6px; font-size: 14px; font-weight: 500; color: #4b5563;">Total cost (₸):</label>
         <input type="number" [(ngModel)]="newTrip.total_cost" placeholder="0" style="width: 100%; padding: 9px 12px; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+      </div>
+      <div>
+        <label style="display: block; margin-bottom: 6px; font-size: 14px; font-weight: 500; color: #4b5563;">Available seats:</label>
+        <input type="number" [(ngModel)]="newTrip.total_seats" min="1" max="8" placeholder="4" style="width: 100%; padding: 9px 12px; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
       </div>
     </div>
 
@@ -102,6 +106,15 @@
     <div style="display: grid; gap: 16px;">
       <div *ngFor="let trip of trips; trackBy: trackByTripId" style="background: white; border: 1px solid #e5e7eb; border-radius: 10px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); position: relative; transition: box-shadow 0.2s;">
         
+        <div class="seats-info" style="margin-bottom: 14px; font-size: 14px;">
+          <span *ngIf="trip.remaining_seats > 0" style="color: #16a34a; font-weight: 600;">
+            Remaining seats: {{ trip.remaining_seats }} out of {{ trip.total_seats }}
+          </span>
+          <span *ngIf="trip.remaining_seats === 0" style="color: #dc2626; font-weight: 600;">
+            No seats available (Car is Full)
+          </span>
+        </div>
+        
         <span [style.background]="trip.status === 'open' ? '#dcfce7' : '#fee2e2'" 
               [style.color]="trip.status === 'open' ? '#166534' : '#991b1b'" 
               style="padding: 4px 10px; border-radius: 9999px; font-size: 12px; position: absolute; top: 20px; right: 20px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">
@@ -122,8 +135,11 @@
 
         <div *ngIf="authService.isLoggedIn()">
           <button (click)="onApply(trip.id)" 
-                  style="background: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; transition: background 0.2s;">
-            Join the trip
+                  [disabled]="trip.remaining_seats === 0 || trip.status !== 'open'"
+                  [style.background]="(trip.remaining_seats === 0 || trip.status !== 'open') ? '#9ca3af' : '#2563eb'"
+                  [style.cursor]="(trip.remaining_seats === 0 || trip.status !== 'open') ? 'not-allowed' : 'pointer'"
+                  style="color: white; border: none; padding: 10px 20px; border-radius: 6px; font-size: 14px; font-weight: 600; transition: background 0.2s;">
+            {{ trip.remaining_seats === 0 ? 'Car is Full' : 'Join the trip' }}
           </button>
       
           <div *ngIf="errorMessage[trip.id]" 

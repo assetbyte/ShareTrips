@@ -28,7 +28,9 @@ export class Home implements OnInit {
     departure_date: '',
     return_date: '',
     application_deadline: '',
-    total_cost: 0
+    total_cost: 0,
+
+    total_seats: 0
   };
 
   constructor (
@@ -100,7 +102,8 @@ export class Home implements OnInit {
           departure_date: '',
           return_date: '',
           application_deadline: '',
-          total_cost: 0
+          total_cost: 0,
+          total_seats: 4
         };
         this.executeSearch(this.searchFrom, this.searchTo);
       },

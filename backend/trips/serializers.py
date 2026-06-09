@@ -4,17 +4,26 @@ from .models import Trip, TripApplication
 from django.utils import timezone
 from datetime import timedelta
 from accounts.serializers import UserSerializer
+
 #get посмотреть поездки
 class TripSerializer(serializers.ModelSerializer):
-    creator = UserSerializer(read_only=True)    
-    return_date = serializers.DateField(required=False, allow_null=True)
+    remaining_seats = serializers.SerializerMethodField()
+    creator = UserSerializer(read_only=True)   
+
     class Meta:
         model = Trip
         fields = [
             'id', 'creator', 'departure_from', 'departure_to', 
-            'departure_date', 'return_date', 'application_deadline', 'total_cost', 'status'
+            'departure_date', 'return_date', 'total_cost', 
+            'status', 'total_seats', 'remaining_seats'
         ]
-        
+
+    def get_remaining_seats(self, obj):
+        #сколько уже занято
+        accepted_applications = obj.applications.filter(status='accepted').count()
+        #остаток мест
+        return obj.total_seats - accepted_applications
+    
 #post создать поездку      
 class TripCreateSerializer(serializers.ModelSerializer):
     return_date = serializers.DateField(required=False, allow_null=True)

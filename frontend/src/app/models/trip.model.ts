@@ -10,8 +10,10 @@ export interface TripInfo {
   application_deadline: string; 
   total_cost: number;           
   status: 'open' | 'closed' | 'completed';
-}
 
+  total_seats: number;
+  remaining_seats: number;
+}
 
 export interface TripCreateData {
   departure_from: string;
@@ -20,4 +22,6 @@ export interface TripCreateData {
   return_date: string; 
   application_deadline: string;
   total_cost: number;
+  
+  total_seats: number;
 }

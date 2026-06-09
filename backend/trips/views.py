@@ -67,9 +67,23 @@ class TripApplicationViewSet(viewsets.ModelViewSet):
                 {"detail": "You are not the creator of this trip!"}, 
                 status=status.HTTP_403_FORBIDDEN
             )
+        #сколько пассажиров уже одобрено
+        accepted_cnt = TripApplication.objects.filter(trip=application.trip, 
+                                                      status="accepted").count()
+        
+        if accepted_cnt > application.trip.total_seats:
+            return Response(
+                {"detail": "No available seats left in this car!"}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
             
         application.status = 'accepted'
         application.save()
+        
+        #если место последнее то меняем статус
+        if accepted_cnt + 1 == application.trip.total_seats:
+            application.trip.status = 'closed'
+            application.trip.save()
         return Response({"status": "application accepted"}, status=status.HTTP_200_OK)
     
     @action(detail=True, methods=['post'], url_path='reject')
