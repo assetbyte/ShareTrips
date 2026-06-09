@@ -9,13 +9,15 @@ from accounts.serializers import UserSerializer
 class TripSerializer(serializers.ModelSerializer):
     remaining_seats = serializers.SerializerMethodField()
     creator = UserSerializer(read_only=True)   
-
+    
+    total_seats = serializers.IntegerField(required=False)
+    
     class Meta:
         model = Trip
         fields = [
             'id', 'creator', 'departure_from', 'departure_to', 
             'departure_date', 'return_date', 'total_cost', 
-            'status', 'total_seats', 'remaining_seats'
+            'status', 'total_seats', 'remaining_seats', 'application_deadline'     
         ]
 
     def get_remaining_seats(self, obj):
@@ -31,7 +33,7 @@ class TripCreateSerializer(serializers.ModelSerializer):
         model = Trip
         fields = [
                 'id', 'departure_from', 'departure_to', 
-                'departure_date', 'return_date', 'application_deadline', 'total_cost', 'status'
+                'departure_date', 'return_date', 'application_deadline', 'total_cost', 'status', 'total_seats'
             ]
 #get посмотреть кто подал заявки    
 class TripApplicationSerializer(serializers.ModelSerializer):

@@ -11,7 +11,7 @@ class Trip(models.Model):
     total_cost = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(max_length=20, default='open') # open, closed, completed
     
-    total_seats = models.PositiveIntegerField()
+    total_seats = models.PositiveIntegerField(default=4)
     
 class TripApplication(models.Model):
     trip = models.ForeignKey(Trip, on_delete=models.CASCADE, related_name='applications') # одна поездка может иметь несколько заявок

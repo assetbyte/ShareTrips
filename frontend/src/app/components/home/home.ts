@@ -30,7 +30,7 @@ export class Home implements OnInit {
     application_deadline: '',
     total_cost: 0,
 
-    total_seats: 0
+    total_seats: 4
   };
 
   constructor (
@@ -95,7 +95,7 @@ export class Home implements OnInit {
 
     this.tripService.createTrip(this.newTrip).subscribe({
       next: (data) => {
-        console.log('Trip created successfully:', data);
+        alert('Trip created successfully');
         this.newTrip = {
           departure_from: '',
           departure_to: '',
