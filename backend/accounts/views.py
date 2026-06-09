@@ -13,6 +13,8 @@ from rest_framework.decorators import authentication_classes
 from rest_framework.authentication import TokenAuthentication
 
 
+
+
 class RegistrationView(APIView):
     permission_classes = [AllowAny]
     #доступ к регистрации доступен всем

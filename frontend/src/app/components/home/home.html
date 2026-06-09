@@ -1,0 +1,153 @@
+<div class="share-trips-container" style="max-width: 900px; margin: 0 auto; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  
+  <h2 style="text-align: center; color: #1a1a1a; margin-bottom: 30px; font-weight: 700; letter-spacing: -0.5px;">Available trips on ShareTrips</h2>
+
+  <div style="background: #ffffff; padding: 24px; border-radius: 12px; margin-bottom: 30px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); border: 1px solid #e5e7eb;">
+    <h3 style="margin-top: 0; margin-bottom: 16px; color: #2563eb; font-size: 18px; font-weight: 600;">Quick route search</h3>
+    
+    <div style="display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-end;">
+      <div style="flex: 1; min-width: 200px;">
+        <label style="display: block; margin-bottom: 6px; font-size: 14px; font-weight: 500; color: #4b5563;">From:</label>
+        <input 
+          type="text" 
+          [(ngModel)]="searchFrom" 
+          list="cities-list"
+          placeholder="Departure city" 
+          style="width: 100%; padding: 10px 12px; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; transition: border-color 0.2s;"
+        >
+      </div>
+      <div style="flex: 1; min-width: 200px;">
+        <label style="display: block; margin-bottom: 6px; font-size: 14px; font-weight: 500; color: #4b5563;">To:</label>
+        <input 
+          type="text" 
+          [(ngModel)]="searchTo" 
+          list="cities-list"
+          placeholder="Arrival city" 
+          style="width: 100%; padding: 10px 12px; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;"
+        >
+
+        <datalist id="cities-list">
+          <option value="Almaty">
+          <option value="Astana">
+          <option value="Aktobe">
+          <option value="Shymkent">
+          <option value="Karaganda">
+          <option value="Taraz">
+          <option value="Pavlodar">
+          <option value="Ust-Kamenogorsk">
+          <option value="Semey">
+        </datalist>
+      </div>
+      <button 
+        (click)="onSearch()" 
+        style="background: #2563eb; color: white; border: none; padding: 10px 24px; border-radius: 6px; cursor: pointer; font-size: 15px; font-weight: 600; height: 41px; transition: background 0.2s;"
+      >
+        Find
+      </button>
+    </div>
+  </div>
+  
+  <div *ngIf="authService.isLoggedIn()" style="background: #ffffff; padding: 24px; border-radius: 12px; margin-bottom: 30px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); border: 1px solid #e5e7eb;">
+    <h3 style="margin-top: 0; margin-bottom: 16px; color: #16a34a; font-size: 18px; font-weight: 600;">Create new route</h3>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 16px;">
+      <div>
+        <label style="display: block; margin-bottom: 6px; font-size: 14px; font-weight: 500; color: #4b5563;">From:</label>
+        <input type="text" [(ngModel)]="newTrip.departure_from" placeholder="Departure city" style="width: 100%; padding: 10px 12px; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+      </div>
+      <div>
+        <label style="display: block; margin-bottom: 6px; font-size: 14px; font-weight: 500; color: #4b5563;">To:</label>
+        <input type="text" [(ngModel)]="newTrip.departure_to" placeholder="Arrival city" style="width: 100%; padding: 10px 12px; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 20px;">
+      <div>
+        <label style="display: block; margin-bottom: 6px; font-size: 14px; font-weight: 500; color: #4b5563;">Travel date:</label>
+        <input type="date" [(ngModel)]="newTrip.departure_date" style="width: 100%; padding: 9px 12px; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+      </div>
+      <div>
+        <label style="display: block; margin-bottom: 6px; font-size: 14px; font-weight: 500; color: #4b5563;">Return Date <span style="color: #9ca3af; font-weight: normal;">(Optional)</span>:</label>
+        <input type="date" [(ngModel)]="newTrip.return_date" style="width: 100%; padding: 9px 12px; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+      </div>
+      <div>
+        <label style="display: block; margin-bottom: 6px; font-size: 14px; font-weight: 500; color: #4b5563;">Deadline for apps:</label>
+        <input type="date" [(ngModel)]="newTrip.application_deadline" style="width: 100%; padding: 9px 12px; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+      </div>
+      <div>
+        <label style="display: block; margin-bottom: 6px; font-size: 14px; font-weight: 500; color: #4b5563;">Total cost (₸):</label>
+        <input type="number" [(ngModel)]="newTrip.total_cost" placeholder="0" style="width: 100%; padding: 9px 12px; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+      </div>
+    </div>
+
+    <button (click)="onCreateTrip()" style="background: #16a34a; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; width: 100%; font-size: 15px; font-weight: 600; transition: background 0.2s;">
+      Publish a trip
+    </button>
+  </div>
+
+  <div *ngIf="!authService.isLoggedIn()" style="background: #fef3c7; color: #92400e; padding: 16px; border-radius: 8px; margin-bottom: 30px; text-align: center; border: 1px solid #fde68a; font-size: 15px;">
+    Want to publish your trip? <a routerLink="/login" style="color: #2563eb; font-weight: 600; text-decoration: none;">Войти в аккаунт</a>.
+  </div>
+
+  <h3 style="padding-bottom: 12px; font-size: 20px; font-weight: 700; color: #1f2937; margin-bottom: 20px;">Travel companions routes:</h3>
+
+  <div *ngIf="isLoading" style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 50px 0;">
+    <div class="spinner" style="border: 3px solid #f3f3f3; border-top: 3px solid #2563eb; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite;"></div>
+    <p style="color: #4b5563; margin-top: 12px; font-weight: 500; font-size: 15px;">We are looking for suitable trips...</p>
+  </div>
+
+  <div *ngIf="!isLoading">
+    <p *ngIf="trips.length === 0" style="color: #6b7280; text-align: center; margin: 40px 0; font-size: 15px;">No trips found on this route... You can create your own route!</p>
+
+    <div style="display: grid; gap: 16px;">
+      <div *ngFor="let trip of trips; trackBy: trackByTripId" style="background: white; border: 1px solid #e5e7eb; border-radius: 10px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); position: relative; transition: box-shadow 0.2s;">
+        
+        <span [style.background]="trip.status === 'open' ? '#dcfce7' : '#fee2e2'" 
+              [style.color]="trip.status === 'open' ? '#166534' : '#991b1b'" 
+              style="padding: 4px 10px; border-radius: 9999px; font-size: 12px; position: absolute; top: 20px; right: 20px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">
+          {{ trip.status }}
+        </span>
+
+        <h3 style="margin: 0 0 16px 0; color: #1e40af; font-size: 20px; font-weight: 700; max-width: 80%;">
+          📍 {{ trip.departure_from }} <span style="color: #9ca3af; font-weight: normal; font-size: 16px; margin: 0 4px;">➔</span> {{ trip.departure_to }}
+        </h3>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; font-size: 14px; color: #4b5563; margin-bottom: 20px; border-top: 1px solid #f3f4f6; padding-top: 16px;">
+          <p style="margin: 0;"><strong style="color: #1f2937;">Departure date:</strong> {{ trip.departure_date | date:'dd.MM.yyyy' }}</p>
+          <p *ngIf="trip.return_date" style="margin: 0;"><strong style="color: #1f2937;">Return date:</strong> {{ trip.return_date | date:'dd.MM.yyyy' }}</p>
+          <p style="margin: 0;"><strong style="color: #1f2937;">Deadline for applications:</strong> {{ trip.application_deadline | date:'dd.MM.yyyy' }}</p>
+          <p style="margin: 0;"><strong style="color: #1f2937;">Cost:</strong> <span style="color: #111827; font-weight: 600; font-size: 15px;">{{ trip.total_cost }} ₸</span></p>
+          <p style="margin: 0;"><strong style="color: #1f2937;">Publisher:</strong> @{{ trip.creator.username }}</p>
+        </div>
+
+        <div *ngIf="authService.isLoggedIn()">
+          <button (click)="onApply(trip.id)" 
+                  style="background: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; transition: background 0.2s;">
+            Join the trip
+          </button>
+      
+          <div *ngIf="errorMessage[trip.id]" 
+              style="margin-top: 12px; background-color: #fef2f2; color: #991b1b; border: 1px solid #fecaca; padding: 12px 16px; border-radius: 6px; font-size: 13px; line-height: 1.4; display: flex; align-items: flex-start; gap: 8px;">
+            <span style="flex-shrink: 0;"></span>
+            <span>{{ errorMessage[trip.id] }}</span>
+          </div>
+        </div>
+
+        <div *ngIf="!authService.isLoggedIn()" style="display: flex; flex-direction: column; align-items: flex-start; gap: 6px;">
+          <button disabled style="background: #f3f4f6; color: #9ca3af; border: 1px solid #e5e7eb; padding: 10px 20px; border-radius: 6px; cursor: not-allowed; font-size: 14px; font-weight: 600;">    
+            Join the trip
+          </button>
+          <small style="color: #dc2626; font-size: 12px; font-weight: 500;">Please log in to join this trip</small>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+</style>

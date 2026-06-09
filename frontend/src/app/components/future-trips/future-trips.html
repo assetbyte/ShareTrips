@@ -1,0 +1,36 @@
+<div style="max-width: 800px; margin: 30px auto; padding: 20px;">
+  <h2>My booked trips</h2>
+
+  <div *ngIf="isLoading" style="text-align: center; margin: 20px 0;">
+    <p>Load your trips...</p>
+  </div>
+
+  <div *ngIf="!isLoading">
+    <p *ngIf="applications.length === 0" style="color: gray;">You haven't applied for any trips yet</p>
+
+    <div style="display: grid; gap: 15px;">
+      <div *ngFor="let app of applications" style="background: white; border: 1px solid #ddd; border-radius: 8px; padding: 20px; position: relative; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+        
+        <span [ngStyle]="{
+          'background-color': app.status === 'success' || app.status === 'accepted' ? '#28a745' : 
+                              app.status === 'rejected' ? '#dc3545' : '#ffc107',
+          'color': app.status === 'pending' ? '#000' : '#fff'
+        }" style="padding: 5px 10px; border-radius: 4px; font-size: 12px; position: absolute; top: 15px; right: 15px; text-transform: uppercase; font-weight: bold;">
+          {{ app.status }}
+        </span>
+
+        <h3 style="margin: 0 0 10px 0; color: #333;">
+          {{ app.trip.departure_from }} ➔ {{ app.trip.departure_to }}
+        </h3>
+
+        <div style="font-size: 14px; color: #666;">
+          <p style="margin: 5px 0;"><strong>Departure date</strong> {{ app.trip.departure_date | date:'dd.MM.yyyy HH:mm' }}</p>
+          <p style="margin: 5px 0;"><strong>Publisher</strong> {{ app.trip.creator.username }}</p>
+          <p style="margin: 5px 0;"><strong>Cost:</strong> {{ app.trip.total_cost }} KZT</p>
+          <small style="color: #999;">Applied at: {{ app.applied_at | date:'dd.MM.yyyy в HH:mm' }}</small>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,37 @@
+<div style="font-family: sans-serif; min-height: 100vh; display: flex; flex-direction: column;">
+  
+  <header style="background-color: #007bff; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+    <div style="font-size: 20px; font-weight: bold; cursor: pointer;" routerLink="/">ShareTrips</div>
+    
+    <nav style="display: flex; gap: 20px; align-items: center;">
+      <a routerLink="/" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" style="color: white; text-decoration: none;">Trips</a>
+      <a routerLink="/reviews" routerLinkActive="active-link" style="color: white; text-decoration: none;">Reviews</a>
+
+      <div *ngIf="authService.isLoggedIn()" style="display: flex; gap: 20px; align-items: center;">
+        <a routerLink="/future-trips" routerLinkActive="active-link" style="color: white; text-decoration: none;">
+          My future trips
+        </a>
+        
+        <a routerLink="/applications" routerLinkActive="active-link" style="color: white; text-decoration: none;">
+          Applications
+        </a>
+
+        <a routerLink="/my-team" routerLinkActive="active-link" style="color: white; text-decoration: none;">
+          My Team
+        </a>
+      </div>
+      
+      <a *ngIf="!authService.isLoggedIn()" routerLink="/login" routerLinkActive="active-link" style="color: white; text-decoration: none; background: #28a745; padding: 5px 15px; border-radius: 4px;">Log in</a>
+      
+      <div *ngIf="authService.isLoggedIn()" style="display: flex; align-items: center; gap: 10px;">
+        <span style="font-size: 14px; border-bottom: 1px dashed white;">{{ username }}</span>
+        <button (click)="onLogout()" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Выйти</button>
+      </div>
+    </nav>
+  </header>
+
+  <main style="flex: 1; padding: 20px; background-color: #f8f9fa;">
+    <router-outlet></router-outlet>
+  </main>
+
+</div>

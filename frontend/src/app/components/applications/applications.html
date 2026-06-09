@@ -1,0 +1,52 @@
+<div style="max-width: 800px; margin: 0 auto; padding: 10px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  
+  <h3 style="font-size: 20px; font-weight: 700; color: #1f2937; margin-bottom: 20px; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px;">
+    Incoming Passenger Requests
+  </h3>
+
+  <div style="display: grid; gap: 16px;">
+    <div *ngFor="let app of incomingApplications" 
+         style="background: white; border: 1px solid #e5e7eb; padding: 20px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+      
+      <div>
+        <p style="margin: 0 0 6px 0; font-size: 16px; color: #1f2937;">
+          Passenger: <strong style="color: #2563eb;">@{{ app.applier.username }}</strong>
+        </p>
+        <p style="margin: 0 0 6px 0; font-size: 14px; color: #4b5563;">
+          Route: <span style="font-weight: 600; color: #111827;">{{ app.trip.departure_from }} ➔ {{ app.trip.departure_to }}</span>
+        </p>
+        <p style="margin: 0; font-size: 13px; color: #6b7280;">
+          Departure date: {{ app.trip.departure_date | date:'dd.MM.yyyy' }}
+        </p>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div *ngIf="app.status === 'pending'" style="display: flex; gap: 8px;">
+          <button (click)="onAccept(app.id)" 
+                  style="background: #16a34a; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; transition: background 0.2s;">
+            Accept
+          </button>
+          <button (click)="onReject(app.id)" 
+                  style="background: #dc2626; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; transition: background 0.2s;">
+            Reject
+          </button>
+        </div>
+
+        <span *ngIf="app.status === 'accepted'" 
+              style="background: #dcfce7; color: #15803d; padding: 6px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+           Accepted
+        </span>
+
+        <span *ngIf="app.status === 'rejected'" 
+              style="background: #fee2e2; color: #b91c1c; padding: 6px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+           Rejected
+        </span>
+      </div>
+
+    </div>
+  </div>
+
+  <p *ngIf="incomingApplications.length === 0" style="text-align: center; color: #6b7280; margin-top: 40px; font-size: 15px;">
+    No new applications found.
+  </p>
+</div>

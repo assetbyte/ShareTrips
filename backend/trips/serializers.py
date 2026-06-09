@@ -1,0 +1,73 @@
+from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
+from .models import Trip, TripApplication
+from django.utils import timezone
+from datetime import timedelta
+from accounts.serializers import UserSerializer
+#get посмотреть поездки
+class TripSerializer(serializers.ModelSerializer):
+    creator = UserSerializer(read_only=True)    
+    return_date = serializers.DateField(required=False, allow_null=True)
+    class Meta:
+        model = Trip
+        fields = [
+            'id', 'creator', 'departure_from', 'departure_to', 
+            'departure_date', 'return_date', 'application_deadline', 'total_cost', 'status'
+        ]
+        
+#post создать поездку      
+class TripCreateSerializer(serializers.ModelSerializer):
+    return_date = serializers.DateField(required=False, allow_null=True)
+    class Meta:
+        model = Trip
+        fields = [
+                'id', 'departure_from', 'departure_to', 
+                'departure_date', 'return_date', 'application_deadline', 'total_cost', 'status'
+            ]
+#get посмотреть кто подал заявки    
+class TripApplicationSerializer(serializers.ModelSerializer):
+    applier = UserSerializer(read_only = True)
+    trip = TripSerializer(read_only = True)
+    class Meta:
+        model = TripApplication
+        fields = ['id', 'trip', 'applier', 'status', 'applied_at']
+        
+#post подать заявки на поездку
+class TripApplicationCreateSeriazlier(serializers.ModelSerializer):
+    class Meta:
+        model = TripApplication
+        fields = ['id', 'trip']
+        
+    def validate(self, attrs):
+        request = self.context.get("request")
+        user = request.user if request else None
+        
+        current_trip = attrs.get('trip')
+        
+        if not user:
+            return attrs
+        
+        if TripApplication.objects.filter(applier=user, trip=current_trip).exists():
+            raise ValidationError("You have already applied for this trip!")
+        
+        
+        #validation from mass requests
+        
+        last_application = TripApplication.objects.filter(applier=user).exclude(
+            status='rejected').select_related('trip').order_by('-trip__departure_date').first()
+        #user will be able to apply to trip if status before was: rejected
+        
+        if last_application:
+            last_trip = last_application.trip
+            trip_end_date = last_trip.return_date if last_trip.return_date else last_trip.departure_date
+    
+    
+            application_blocked_until = trip_end_date + timedelta(days=3)
+    
+            if current_trip.departure_date < application_blocked_until:
+                raise ValidationError(
+                    f"You have a scheduled trip from {last_trip.departure_from} to {last_trip.departure_to} "
+                    f"that ends around {trip_end_date.strftime('%d.%m.%Y')}. You can book next trips after this date."
+                )
+            
+        return attrs

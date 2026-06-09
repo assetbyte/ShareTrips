@@ -5,7 +5,7 @@ from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
 
-router.register(r'review', ReviewView, basename='review')
+router.register(r'reviews', ReviewView, basename='review')
 
 urlpatterns = [
     path('register/', RegistrationView.as_view(), name='register'),

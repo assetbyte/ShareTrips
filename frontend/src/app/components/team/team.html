@@ -1,0 +1,9 @@
+<p *ngIf="teamMembers.length === 0" style="text-align: center; color: #6b7280; margin-top: 40px; font-size: 15px;">
+  You do not have a team yet.
+</p>
+
+<div *ngFor="let member of teamMembers" style="margin-bottom: 15px; padding: 10px; border-bottom: 1px solid #6b7280;">
+  <p>Passenger: <strong>@{{ member.applier.username }}</strong></p>
+  <p>Applied Date: <span>{{ member.applied_at | date:'dd.MM.yyyy HH:mm' }}</span></p>
+  <p>Route: {{ member.trip.departure_from }} ➔ {{ member.trip.departure_to }}</p>
+</div>
