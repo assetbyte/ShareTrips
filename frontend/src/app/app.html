@@ -22,6 +22,7 @@
       </div>
       
       <a *ngIf="!authService.isLoggedIn()" routerLink="/login" routerLinkActive="active-link" style="color: white; text-decoration: none; background: #28a745; padding: 5px 15px; border-radius: 4px;">Log in</a>
+      <a *ngIf="!authService.isLoggedIn()" routerLink="/register" routerLinkActive="active-link" style="color: white; text-decoration: none; background: #28a745; padding: 5px 15px; border-radius: 4px;">Sign up</a>
       
       <div *ngIf="authService.isLoggedIn()" style="display: flex; align-items: center; gap: 10px;">
         <span style="font-size: 14px; border-bottom: 1px dashed white;">{{ username }}</span>

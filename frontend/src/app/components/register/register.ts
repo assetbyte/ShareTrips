@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink} from '@angular/router';
 import { Auth } from '../../services/auth';
-
+import { RegistrationData } from '../../models/user.model';
 @Component({
   selector: 'app-register',
   imports: [CommonModule, FormsModule, RouterLink],
@@ -11,7 +11,7 @@ import { Auth } from '../../services/auth';
   styleUrl: './register.scss',
 })
 export class Register {
-  registrationData = {
+  registrationData: RegistrationData = {
     username: '',
     email: '',
     password: '',
