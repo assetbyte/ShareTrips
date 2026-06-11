@@ -1,0 +1,114 @@
+<div class="register-container" style="max-width: 600px; margin: 40px auto; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+  
+  <div style="background: #ffffff; padding: 32px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); border: 1px solid #e5e7eb;">
+    
+    <h2 style="text-align: center; color: #1a1a1a; margin-bottom: 8px; font-weight: 700; letter-spacing: -0.5px;">Create an Account</h2>
+    <p style="text-align: center; color: #6b7280; font-size: 14px; margin-bottom: 32px;">Join ShareTrips to find travel companions</p>
+
+    <form (ngSubmit)="onRegister()" #registerForm="ngForm">
+      
+      <h3 style="margin-top: 0; margin-bottom: 16px; color: #2563eb; font-size: 16px; font-weight: 600; border-bottom: 1px solid #f3f4f6; padding-bottom: 8px;">1. Account Info</h3>
+      
+      <div style="margin-bottom: 16px;">
+        <label style="display: block; margin-bottom: 6px; font-size: 14px; font-weight: 500; color: #4b5563;">Username *</label>
+        <input 
+          type="text" 
+          [(ngModel)]="registrationData.username" 
+          name="username" 
+          required
+          placeholder="e.g. asset_dev" 
+          style="width: 100%; padding: 10px 12px; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;"
+        >
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <label style="display: block; margin-bottom: 6px; font-size: 14px; font-weight: 500; color: #4b5563;">Email Address *</label>
+        <input 
+          type="email" 
+          [(ngModel)]="registrationData.email" 
+          name="email" 
+          required
+          placeholder="yourname@example.com" 
+          style="width: 100%; padding: 10px 12px; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;"
+        >
+      </div>
+
+      <div style="margin-bottom: 24px;">
+        <label style="display: block; margin-bottom: 6px; font-size: 14px; font-weight: 500; color: #4b5563;">Password *</label>
+        <input 
+          type="password" 
+          [(ngModel)]="registrationData.password" 
+          name="password" 
+          required
+          placeholder="••••••••" 
+          style="width: 100%; padding: 10px 12px; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;"
+        >
+      </div>
+
+      <h3 style="margin-top: 24px; margin-bottom: 16px; color: #16a34a; font-size: 16px; font-weight: 600; border-bottom: 1px solid #f3f4f6; padding-bottom: 8px;">2. Personal Profile</h3>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+        <div>
+          <label style="display: block; margin-bottom: 6px; font-size: 14px; font-weight: 500; color: #4b5563;">First Name *</label>
+          <input 
+            type="text" 
+            [(ngModel)]="registrationData.name" 
+            name="name" 
+            required
+            placeholder="Asset" 
+            style="width: 100%; padding: 10px 12px; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;"
+          >
+        </div>
+        <div>
+          <label style="display: block; margin-bottom: 6px; font-size: 14px; font-weight: 500; color: #4b5563;">Last Name *</label>
+          <input 
+            type="text" 
+            [(ngModel)]="registrationData.last_name" 
+            name="last_name" 
+            required
+            placeholder="Abdirakhman" 
+            style="width: 100%; padding: 10px 12px; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;"
+          >
+        </div>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <label style="display: block; margin-bottom: 6px; font-size: 14px; font-weight: 500; color: #4b5563;">Phone Number *</label>
+        <input 
+          type="text" 
+          [(ngModel)]="registrationData.phone" 
+          name="phone" 
+          required
+          placeholder="+7 (707) 123-45-67" 
+          style="width: 100%; padding: 10px 12px; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;"
+        >
+      </div>
+
+      <div style="margin-bottom: 24px;">
+        <label style="display: block; margin-bottom: 6px; font-size: 14px; font-weight: 500; color: #4b5563;">Bio <span style="color: #9ca3af; font-weight: normal;">(Optional)</span></label>
+        <textarea 
+          [(ngModel)]="registrationData.bio" 
+          name="bio" 
+          rows="3"
+          placeholder="Tell other drivers or passengers a bit about yourself..." 
+          style="width: 100%; padding: 10px 12px; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; font-family: inherit; resize: vertical;"
+        ></textarea>
+      </div>
+
+      <button 
+        type="submit" 
+        [disabled]="!registerForm.form.valid"
+        [style.background]="!registerForm.form.valid ? '#9ca3af' : '#2563eb'"
+        [style.cursor]="!registerForm.form.valid ? 'not-allowed' : 'pointer'"
+        style="color: white; border: none; padding: 12px 20px; border-radius: 6px; width: 100%; font-size: 15px; font-weight: 600; transition: background 0.2s; margin-bottom: 16px;"
+      >
+        Sign Up
+      </button>
+
+      <p style="text-align: center; color: #4b5563; font-size: 14px; margin: 0;">
+        Already have an account? <a routerLink="/login" style="color: #2563eb; font-weight: 600; text-decoration: none;">Log in</a>
+      </p>
+
+    </form>
+  </div>
+</div>

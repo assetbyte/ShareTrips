@@ -11,7 +11,6 @@ export interface UserProfile {
     phone: string;
     bio: string;
     avatar: string | null; 
-
     user_id: number;     
     username?: string;   
     email?: string;
@@ -37,4 +36,15 @@ export interface AuthResponse {
     token: string;
     user_id: number;
     username: string;
+}
+
+export interface RegistrationData {
+    username: string;
+    email: string;
+    password: string;
+    name: string;
+    last_name: string;
+    phone: string;
+    bio: string;
+
 }
