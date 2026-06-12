@@ -15,7 +15,7 @@ export class Reviews implements OnInit {
   reviews: Review[] = [];
   
   newReview: ReviewCreateData = {
-    user_receiver: 1,
+    user_receiver: '',
     rating: 5,
     comment: ''
   };
@@ -45,7 +45,7 @@ export class Reviews implements OnInit {
 
     this.reviewService.createReview(this.newReview).subscribe({
       next: (savedReview) => {
-        console.log('Review added', savedReview);
+        alert('Review added');
         this.newReview.comment = '';
         this.loadReviews();
       },

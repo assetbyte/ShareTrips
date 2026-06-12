@@ -23,8 +23,9 @@ export class Auth {
     )
   }
 
-  register(userData: RegistrationData): Observable<any> {
-    return this.http.post<any>(this.registerUrl, userData);
+  
+  register(data: FormData | RegistrationData): Observable<any> {
+    return this.http.post('http://localhost:8000/api/auth/register/', data);
   }
   
   logout(): void {

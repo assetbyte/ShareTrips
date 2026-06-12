@@ -17,7 +17,8 @@ class TripSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'creator', 'departure_from', 'departure_to', 
             'departure_date', 'return_date', 'total_cost', 
-            'status', 'total_seats', 'remaining_seats', 'application_deadline'     
+            'total_seats', 'remaining_seats', 'application_deadline'  
+            ,'status'  
         ]
 
     def get_remaining_seats(self, obj):
@@ -33,7 +34,7 @@ class TripCreateSerializer(serializers.ModelSerializer):
         model = Trip
         fields = [
                 'id', 'departure_from', 'departure_to', 
-                'departure_date', 'return_date', 'application_deadline', 'total_cost', 'status', 'total_seats'
+                'departure_date', 'return_date', 'application_deadline', 'total_cost', 'total_seats'
             ]
 #get посмотреть кто подал заявки    
 class TripApplicationSerializer(serializers.ModelSerializer):

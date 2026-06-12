@@ -18,7 +18,6 @@ class TripViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
-        time.sleep(2)
         queryset = Trip.objects.all().order_by('-departure_date')
         
         departure_from = self.request.query_params.get("from")

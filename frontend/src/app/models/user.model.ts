@@ -26,7 +26,7 @@ export interface Review {
 }
 
 export interface ReviewCreateData {
-    user_receiver: number;   
+    user_receiver: string;   
     rating: number;
     comment: string;
 }

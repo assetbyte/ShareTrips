@@ -1,0 +1,116 @@
+@if (loading) {
+  <div class="loading-box">
+    <div class="spinner"></div>
+    <p>Loading profile details...</p>
+  </div>
+} @else if (errorMessage) {
+  <div class="error-box">
+    <p>{{ errorMessage }}</p>
+  </div>
+} @else if (profileData) {
+  <div class="profile-container">
+    
+    <div class="profile-card">
+      <div class="avatar-container" style="position: relative; display: inline-block; margin-bottom: 15px;">
+        <img 
+        [src]="profileData.profile?.avatar ? 'http://localhost:8000' + profileData.profile.avatar : 'assets/default-avatar.png'" 
+        alt="User Avatar" 
+        class="profile-avatar"
+        style="width: 130px; height: 130px; border-radius: 50%; object-fit: cover; border: 4px solid #0056b3;"
+        >
+    
+        <input 
+          type="file" 
+          #avatarChangeInput 
+          (change)="onAvatarChange($event)" 
+          accept="image/*" 
+          style="display: none;"
+        >
+        
+        <div 
+          (click)="avatarChangeInput.click()" 
+          style="position: absolute; bottom: 5px; right: 5px; background: #0056b3; color: white; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"
+          title="Change profile picture"
+        >
+        </div>
+      </div>
+      
+      <h2 class="user-fullname">{{ profileData.profile?.name }} {{ profileData.profile?.last_name }}</h2>
+      <p class="user-username">{{ profileData.profile?.user?.username }}</p>
+      
+      <div class="rating-badge">
+        <span class="star">★</span> {{ profileData.profile?.average_rating }} / 5.0
+      </div>
+
+      <div class="bio-box">
+        <h3>About me</h3>
+        <p class="bio-text">{{ profileData.profile?.bio || 'This user hasn\'t written a bio yet.' }}</p>
+      </div>
+
+      <div class="contact-info">
+        <p><strong>Phone:</strong> {{ profileData.profile?.phone }}</p>
+        <p><strong>Email:</strong> {{ profileData.profile?.user?.email }}</p>
+      </div>
+    </div>
+
+    <div class="trips-section">
+      <h2>Trips I Organized</h2>
+      
+      @if (profileData.my_created_trips?.length > 0) {
+        <div class="trips-list">
+          <div class="trip-card" *ngFor="let trip of profileData.my_created_trips">
+            <div class="trip-header">
+              <span class="route">{{ trip.departure_from }} → {{ trip.departure_to }}</span>
+              <span class="status-badge" [ngClass]="{
+                'status-future': trip.status === 'Trip is about to start',
+                'status-active': trip.status === 'Trip is going on',
+                'status-ended': trip.status === 'Trip has ended'
+              }">
+                {{ trip.status }}
+              </span>
+            </div>
+            
+            <div class="trip-body">
+              <p><strong>Departure:</strong> {{ trip.departure_date | date:'dd.MM.yyyy' }}</p>
+              <p *ngIf="trip.return_date"><strong>Return:</strong> {{ trip.return_date | date:'dd.MM.yyyy' }}</p>
+              <p><strong>Seats left:</strong> {{ trip.remaining_seats }} / {{ trip.total_seats }}</p>
+              <p><strong>Price:</strong> {{ trip.total_cost }} KZT</p>
+            </div>
+          </div>
+        </div>
+      } @else {
+        <p class="empty-message">You haven't organized any trips yet.</p>
+      }
+    </div>
+
+    <div class="trips-section">
+      <h2>Trips I am Joining</h2>
+      
+      @if (profileData.my_joined_trips?.length > 0) {
+        <div class="trips-list">
+          <div class="trip-card" *ngFor="let trip of profileData.my_joined_trips">
+            <div class="trip-header">
+              <span class="route">{{ trip.departure_from }} → {{ trip.departure_to }}</span>
+              <span class="status-badge" [ngClass]="{
+                'status-future': trip.status === 'Trip is about to start',
+                'status-active': trip.status === 'Trip is going on',
+                'status-ended': trip.status === 'Trip has ended'
+              }">
+                {{ trip.status }}
+              </span>
+            </div>
+            
+            <div class="trip-body">
+              <p><strong>Driver:</strong> &#64;{{ trip.creator?.username }}</p>
+              <p><strong>Departure Date:</strong> {{ trip.departure_date | date:'dd.MM.yyyy' }}</p>
+              <p><strong>Price:</strong> {{ trip.total_cost }} KZT</p>
+            </div>
+          </div>
+        </div>
+      } @else {
+        <p class="empty-message">You haven't joined any trips as a passenger yet.</p>
+      }
+    </div>
+
+  </div>
+}

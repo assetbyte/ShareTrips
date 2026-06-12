@@ -6,6 +6,7 @@ import { FutureTrips } from './components/future-trips/future-trips';
 import { Applications } from './components/applications/applications';
 import { Team } from './components/team/team';
 import { Register } from './components/register/register';
+import { MyProfile } from './components/my-profile/my-profile';
 export const routes: Routes = [
     {path: '', component: Home},
     {path: 'login', component: Login},
@@ -14,5 +15,6 @@ export const routes: Routes = [
     { path: 'applications', component: Applications },
     { path: 'my-team', component: Team },
     {path: 'register', component: Register},
+    {path: 'my-profile', component: MyProfile},
     {path: '**', redirectTo: '', pathMatch:"full"}
 ];

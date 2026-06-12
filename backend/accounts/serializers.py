@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from .models import Profile, Review
 from django.contrib.auth.models import User
+from django.db.models import Avg
+
 #гланый сериализатор чтоб вытаскивать инфу о пользователе и его профиле и отзывах 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -9,11 +11,18 @@ class UserSerializer(serializers.ModelSerializer):
 #get
 class ProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
+    average_rating = serializers.SerializerMethodField()
     
     class Meta:
         model = Profile
-        fields = ['id', 'name', 'last_name', 'phone', 'avatar', 'bio', 'user']
+        fields = ['id', 'name', 'last_name', 'phone', 'avatar', 'bio', 'user', 'average_rating']
         
+    def get_average_rating(self, obj):
+        current_user = obj.user
+        rating_data = current_user.reviews_received.aggregate(Avg('rating')) #rating__avg
+        avg = rating_data['rating__avg']
+        
+        return round(avg, 1) if avg is not None else 0.0
 #get 
 class ReviewSerializer(serializers.ModelSerializer):
     user_sender = UserSerializer(read_only=True)
@@ -44,7 +53,11 @@ class RegistrationSerializer(serializers.ModelSerializer):
         return profile
 #post
 class ReviewCreateSerializer(serializers.ModelSerializer):
+    user_receiver = serializers.SlugRelatedField(
+        slug_field='username',
+        queryset=User.objects.all())
     class Meta:
+        
         model = Review
         fields = ['id', 'user_receiver', 'rating', 'comment'] #created_at
         #user sender через user_sender = self.request.user получу
