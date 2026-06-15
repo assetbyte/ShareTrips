@@ -7,7 +7,7 @@ class Trip(models.Model):
     departure_from = models.CharField(max_length=100)
     departure_to = models.CharField(max_length=100)
     departure_date = models.DateField()
-    return_date = models.DateField()
+    return_date = models.DateField(null=True, blank=True)
     application_deadline = models.DateField()
     total_cost = models.DecimalField(max_digits=10, decimal_places=2)
     total_seats = models.PositiveIntegerField(default=4)

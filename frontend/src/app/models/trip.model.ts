@@ -9,7 +9,7 @@ export interface TripInfo {
   return_date?: string;   
   application_deadline: string; 
   total_cost: number;           
-  status: 'open' | 'closed' | 'completed';
+  status: 'open' | 'Trip is about to start' | 'Trip is going on' | 'Trip has ended';
 
   total_seats: number;
   remaining_seats: number;

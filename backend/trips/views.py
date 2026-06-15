@@ -70,7 +70,7 @@ class TripApplicationViewSet(viewsets.ModelViewSet):
         accepted_cnt = TripApplication.objects.filter(trip=application.trip, 
                                                       status="accepted").count()
         
-        if accepted_cnt > application.trip.total_seats:
+        if accepted_cnt >= application.trip.total_seats:
             return Response(
                 {"detail": "No available seats left in this car!"}, 
                 status=status.HTTP_400_BAD_REQUEST

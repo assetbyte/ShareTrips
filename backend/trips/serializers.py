@@ -36,6 +36,28 @@ class TripCreateSerializer(serializers.ModelSerializer):
                 'id', 'departure_from', 'departure_to', 
                 'departure_date', 'return_date', 'application_deadline', 'total_cost', 'total_seats'
             ]
+        
+    def validate(self , attrs):
+        #дата отправки < дата возвращения 
+        #заявки принимаются МАКСИМУМ за два дня до отправления. 
+        departure_date = attrs.get('departure_date')
+        return_date = attrs.get('return_date')
+        application_deadline = attrs.get('application_deadline')
+        
+        #поездка может быть в один конец
+        if return_date and departure_date > return_date:
+            raise ValidationError({
+                "return_date": "Departure date cannot be later than the return date."
+            })
+        
+        if departure_date - timedelta(days=2)  < application_deadline:
+            raise ValidationError({
+                "application_deadline": "Application deadline must be at least 2 days before the departure date."
+            })
+            
+        return attrs
+        
+            
 #get посмотреть кто подал заявки    
 class TripApplicationSerializer(serializers.ModelSerializer):
     applier = UserSerializer(read_only = True)
@@ -56,13 +78,14 @@ class TripApplicationCreateSeriazlier(serializers.ModelSerializer):
         
         current_trip = attrs.get('trip')
         
+        
         if not user:
             return attrs
         
         if TripApplication.objects.filter(applier=user, trip=current_trip).exists():
             raise ValidationError("You have already applied for this trip!")
         
-        
+            
         #validation from mass requests
         
         last_application = TripApplication.objects.filter(applier=user).exclude(

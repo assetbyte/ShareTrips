@@ -13,16 +13,15 @@ class ProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     average_rating = serializers.SerializerMethodField()
     
+    
     class Meta:
         model = Profile
         fields = ['id', 'name', 'last_name', 'phone', 'avatar', 'bio', 'user', 'average_rating']
         
-    def get_average_rating(self, obj):
-        current_user = obj.user
-        rating_data = current_user.reviews_received.aggregate(Avg('rating')) #rating__avg
+    def get_avg_rating(self, object):
+        current_user = object.user
+        rating_data = current_user.reviews_received.aggregate(Avg('rating'))
         avg = rating_data['rating__avg']
-        
-        return round(avg, 1) if avg is not None else 0.0
 #get 
 class ReviewSerializer(serializers.ModelSerializer):
     user_sender = UserSerializer(read_only=True)

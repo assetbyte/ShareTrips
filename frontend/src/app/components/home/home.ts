@@ -19,6 +19,8 @@ export class Home implements OnInit {
 
   errorMessage: { [key: number]: string } = {};
 
+  createTripErrors: { [key: string]: string } = {};
+
   searchFrom: string = '';
   searchTo: string = '';
 
@@ -93,9 +95,16 @@ export class Home implements OnInit {
       return;
     }
 
-    this.tripService.createTrip(this.newTrip).subscribe({
+    const tripDataToSubmit = { ...this.newTrip };
+
+    if (tripDataToSubmit.return_date === '') {
+      tripDataToSubmit.return_date = null as any; 
+    }
+
+    this.tripService.createTrip(tripDataToSubmit).subscribe({
       next: (data) => {
         alert('Trip created successfully');
+        this.createTripErrors = {};
         this.newTrip = {
           departure_from: '',
           departure_to: '',
@@ -109,8 +118,17 @@ export class Home implements OnInit {
       },
       error: (err) => {
         console.error('Error while trying create a trip:', err);
-        alert('Something went wrong, check the authorization');
-        console.log('Django validation errors:', err.error);
+        this.createTripErrors = {}; 
+        if (err.error && typeof err.error === 'object' && !Array.isArray(err.error)) {
+          Object.keys(err.error).forEach(key => {
+            const errorValue = err.error[key];
+            this.createTripErrors[key] = Array.isArray(errorValue) ? errorValue[0] : errorValue;
+          });
+        } else {
+          alert('Something went wrong, check if you filled all required fields!');
+        }
+        
+        this.cdr.detectChanges(); 
       }
     });
   }
