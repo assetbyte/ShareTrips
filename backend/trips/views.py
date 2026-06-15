@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.shortcuts import render
 from rest_framework import viewsets, status
 from rest_framework.response import Response
@@ -18,7 +20,10 @@ class TripViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
-        queryset = Trip.objects.all().order_by('-departure_date')
+        today = date.today()
+        
+        #показываем еще те поездки которые еще не начались
+        queryset = Trip.objects.filter(departure_date__gt=today).order_by('-departure_date')
         
         departure_from = self.request.query_params.get("from")
         departure_to = self.request.query_params.get("to")
