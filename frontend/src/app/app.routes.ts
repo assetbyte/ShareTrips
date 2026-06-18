@@ -7,6 +7,7 @@ import { Applications } from './components/applications/applications';
 import { Team } from './components/team/team';
 import { Register } from './components/register/register';
 import { MyProfile } from './components/my-profile/my-profile';
+import { ChatComponent } from './components/chat/chat';
 export const routes: Routes = [
     {path: '', component: Home},
     {path: 'login', component: Login},
@@ -16,5 +17,7 @@ export const routes: Routes = [
     { path: 'my-team', component: Team },
     {path: 'register', component: Register},
     {path: 'my-profile', component: MyProfile},
-    {path: '**', redirectTo: '', pathMatch:"full"}
+    { path: 'chat/:id', component: ChatComponent},
+    {path: '**', redirectTo: '', pathMatch:"full"},
+    
 ];

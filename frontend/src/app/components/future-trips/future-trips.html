@@ -1,4 +1,4 @@
-<div style="max-width: 800px; margin: 30px auto; padding: 20px;">
+<div style="max-width: 800px; margin: 30px auto; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
   <h2>My booked trips</h2>
 
   <div *ngIf="isLoading" style="text-align: center; margin: 20px 0;">
@@ -16,18 +16,38 @@
                               app.status === 'rejected' ? '#dc3545' : '#ffc107',
           'color': app.status === 'pending' ? '#000' : '#fff'
         }" style="padding: 5px 10px; border-radius: 4px; font-size: 12px; position: absolute; top: 15px; right: 15px; text-transform: uppercase; font-weight: bold;">
-          {{ app.status }}
+          Your Application status: {{ app.status }}
         </span>
 
-        <h3 style="margin: 0 0 10px 0; color: #333;">
+        <h3 style="margin: 0 0 10px 0; color: #333; max-width: 70%;">
           {{ app.trip.departure_from }} ➔ {{ app.trip.departure_to }}
         </h3>
 
         <div style="font-size: 14px; color: #666;">
-          <p style="margin: 5px 0;"><strong>Departure date</strong> {{ app.trip.departure_date | date:'dd.MM.yyyy HH:mm' }}</p>
-          <p style="margin: 5px 0;"><strong>Publisher</strong> {{ app.trip.creator.username }}</p>
+          <p style="margin: 8px 0; display: flex; align-items: center; gap: 6px;">
+            <strong>Trip Status:</strong> 
+            <span [ngStyle]="{
+              'color': app.trip.status === 'Trip is going on' ? '#10b981' : 
+                       app.trip.status === 'Trip has ended' ? '#ef4444' : '#b45309',
+              'font-weight': '600'
+            }">
+              {{ 
+                app.trip.status === 'Trip is about to start' ? 'Upcoming' :
+                app.trip.status === 'Trip is going on' ? 'In Progress' :
+                app.trip.status === 'Trip has ended' ? 'Finished' :
+                app.trip.status
+              }}
+            </span>
+          </p>
+          <hr style="border: 0; border-top: 1px solid #f3f4f6; margin: 10px 0;">
+
+          <p style="margin: 5px 0;"><strong>Departure date:</strong> {{ app.trip.departure_date | date:'dd.MM.yyyy' }}</p>
+          <p style="margin: 5px 0;"><strong>Publisher:</strong> @{{ app.trip.creator.username }}</p>
           <p style="margin: 5px 0;"><strong>Cost:</strong> {{ app.trip.total_cost }} KZT</p>
-          <small style="color: #999;">Applied at: {{ app.applied_at | date:'dd.MM.yyyy в HH:mm' }}</small>
+          
+          <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid #fafafa;">
+            <small style="color: #999;">Applied at: {{ app.applied_at | date:'dd.MM.yyyy в HH:mm' }}</small>
+          </div>
         </div>
 
       </div>

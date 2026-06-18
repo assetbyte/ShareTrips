@@ -1,6 +1,7 @@
 import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
 import { TripService } from '../../services/trip';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 // структура сгруппированной поездки
 export interface GroupedTrip {
   tripId: number;
@@ -12,7 +13,7 @@ export interface GroupedTrip {
 
 @Component({
   selector: 'app-team',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   standalone: true,
   templateUrl: './team.html',
   styleUrl: './team.scss',

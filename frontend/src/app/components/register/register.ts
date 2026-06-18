@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Auth } from '../../services/auth';
 import { RegistrationData } from '../../models/user.model';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-register',
@@ -26,7 +27,10 @@ export class Register {
   selectedFile: File | null = null;
   selectedFileName: string = '';
 
-  constructor(private authService: Auth, private router: Router) {}
+  
+  errors: { [key: string]: string } = {};
+
+  constructor(private authService: Auth, private router: Router, private cdr: ChangeDetectorRef) {}
 
   onFileSelected(event: any): void {
     const file = event.target.files[0];
@@ -37,6 +41,9 @@ export class Register {
   }
 
   onRegister(): void {
+
+    this.errors = {};
+
     const formData = new FormData();
 
     formData.append('username', this.registrationData.username);
@@ -53,12 +60,12 @@ export class Register {
     if (this.selectedFile) {
       formData.append('avatar', this.selectedFile, this.selectedFile.name);
     }
+
     this.authService.register(formData).subscribe({
       next: (data) => {
         alert('Registered successfully');
         this.router.navigate(['/login']);
         
-
         this.registrationData = {
           username: '', email: '', password: '',
           name: '', last_name: '', phone: '', bio: ''
@@ -67,8 +74,20 @@ export class Register {
         this.selectedFileName = '';
       },
       error: (err) => {
-        console.error(err);
-        alert("Something went wrong while registration!");
+        console.error('Registration error status:', err.status, err.error);
+        
+        
+        if (err.error && typeof err.error === 'object' && !Array.isArray(err.error)) {
+          Object.keys(err.error).forEach(key => {
+            const errorValue = err.error[key];
+            
+            this.errors[key] = Array.isArray(errorValue) ? errorValue[0] : errorValue;
+            this.cdr.detectChanges();
+          });
+        } else {
+
+          alert("Something went wrong while registration! Please try again later.");
+        }
       }
     });
   }

@@ -19,6 +19,9 @@
           placeholder="e.g. asset_byte" 
           style="width: 100%; padding: 10px 12px; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;"
         >
+        <small *ngIf="errors['username']" style="color: #dc2626; font-size: 12px; margin-top: 5px; display: block; font-weight: 500;">
+          {{ errors['username'] }}
+        </small>
       </div>
 
       <div style="margin-bottom: 16px;">
@@ -31,6 +34,9 @@
           placeholder="yourname@example.com" 
           style="width: 100%; padding: 10px 12px; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;"
         >
+        <small *ngIf="errors['email']" style="color: #dc2626; font-size: 12px; margin-top: 5px; display: block; font-weight: 500;">
+          {{ errors['email'] }}
+        </small>
       </div>
 
       <div style="margin-bottom: 24px;">
@@ -43,11 +49,15 @@
           placeholder="********" 
           style="width: 100%; padding: 10px 12px; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;"
         >
+        <small *ngIf="errors['password']" style="color: #dc2626; font-size: 12px; margin-top: 5px; display: block; font-weight: 500;">
+          {{ errors['password'] }}
+        </small>
       </div>
 
       <h3 style="margin-top: 24px; margin-bottom: 16px; color: #16a34a; font-size: 16px; font-weight: 600; border-bottom: 1px solid #f3f4f6; padding-bottom: 8px;">2. Personal Profile</h3>
+      
       <div style="margin-bottom: 20px; text-align: center; background: #f9fafb; padding: 16px; border-radius: 8px; border: 1px dashed #d1d5db;">
-        <label style="display: block; margin-bottom: 8px; font-size: 14px; font-weight: 500; color: #4b5563;">Profile Picture</label>
+        <label style="display: block; margin-bottom: 8px; font-size: 14px; font-weight: 500; color: #4b5563;">Profile Picture <span style="color: #9ca3af; font-weight: normal;">(Optional)</span></label>
         
         <input 
           type="file" 
@@ -68,7 +78,11 @@
         <p style="margin: 8px 0 0 0; font-size: 13px; color: #6b7280;" *ngIf="selectedFileName">
           Selected: <strong>{{ selectedFileName }}</strong>
         </p>
+        <small *ngIf="errors['avatar']" style="color: #dc2626; font-size: 12px; margin-top: 5px; display: block; font-weight: 500;">
+          {{ errors['avatar'] }}
+        </small>
       </div>
+
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
         <div>
           <label style="display: block; margin-bottom: 6px; font-size: 14px; font-weight: 500; color: #4b5563;">First Name *</label>
@@ -80,7 +94,11 @@
             placeholder="Asset" 
             style="width: 100%; padding: 10px 12px; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;"
           >
+          <small *ngIf="errors['name']" style="color: #dc2626; font-size: 12px; margin-top: 5px; display: block; font-weight: 500;">
+            {{ errors['name'] }}
+          </small>
         </div>
+        
         <div>
           <label style="display: block; margin-bottom: 6px; font-size: 14px; font-weight: 500; color: #4b5563;">Last Name *</label>
           <input 
@@ -91,6 +109,9 @@
             placeholder="Abdirakhman" 
             style="width: 100%; padding: 10px 12px; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;"
           >
+          <small *ngIf="errors['last_name']" style="color: #dc2626; font-size: 12px; margin-top: 5px; display: block; font-weight: 500;">
+            {{ errors['last_name'] }}
+          </small>
         </div>
       </div>
 
@@ -101,9 +122,12 @@
           [(ngModel)]="registrationData.phone" 
           name="phone" 
           required
-          placeholder="+7 (707) 123-45-67" 
+          placeholder="+7 707-123-45-67" 
           style="width: 100%; padding: 10px 12px; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;"
         >
+        <small *ngIf="errors['phone']" style="color: #dc2626; font-size: 12px; margin-top: 5px; display: block; font-weight: 500;">
+          {{ errors['phone'] }}
+        </small>
       </div>
 
       <div style="margin-bottom: 24px;">
@@ -115,6 +139,9 @@
           placeholder="Tell other drivers or passengers a bit about yourself..." 
           style="width: 100%; padding: 10px 12px; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; font-family: inherit; resize: vertical;"
         ></textarea>
+        <small *ngIf="errors['bio']" style="color: #dc2626; font-size: 12px; margin-top: 5px; display: block; font-weight: 500;">
+          {{ errors['bio'] }}
+        </small>
       </div>
 
       <button 
