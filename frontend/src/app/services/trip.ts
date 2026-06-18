@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { min, Observable } from 'rxjs';
 import { TripInfo, TripCreateData } from '../models/trip.model';
 import { Auth } from './auth';
 import { TripApplication } from '../models/trip-application.model';
@@ -23,7 +23,7 @@ export class TripService {
     });
   }
 
-  getTrips(from?: string, to?: string, date?:string): Observable<TripInfo[]> {
+  getTrips(from?: string, to?: string, date?:string, minCost?: number, maxCost?: number): Observable<TripInfo[]> {
     let params = new HttpParams();
 
     if (from) {
@@ -36,6 +36,12 @@ export class TripService {
 
     if (date) {
       params = params.set('date', date);
+    }
+    if (minCost) {
+      params = params.set('min_price', minCost);
+    }
+    if (maxCost) {
+      params = params.set('max_price', maxCost);
     }
 
     return this.http.get<TripInfo[]>(this.apiUrl, { params }); 

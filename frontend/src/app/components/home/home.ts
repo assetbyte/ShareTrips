@@ -5,11 +5,13 @@ import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { Auth } from '../../services/auth';
 import { TripService } from '../../services/trip';
 import { TripInfo, TripCreateData } from '../../models/trip.model';
+import { min } from 'rxjs';
+import { MatSliderModule } from '@angular/material/slider';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, MatSliderModule],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
@@ -24,6 +26,9 @@ export class Home implements OnInit {
   searchFrom: string = '';
   searchTo: string = '';
   departureDate: string = '';
+  minCost: number = 0;
+  maxCost: number = 0;
+
 
   newTrip: TripCreateData = {
     departure_from: '',
@@ -46,40 +51,62 @@ export class Home implements OnInit {
 
   ngOnInit(): void {
     const snapshotParams = this.route.snapshot.queryParams;
-    if (snapshotParams['from'] || snapshotParams['to'] || snapshotParams["date"]) {
+    if (snapshotParams['from'] || snapshotParams['to'] || snapshotParams["date"] || snapshotParams["minCost"] || snapshotParams["maxCost"]) {
       this.searchFrom = '';
       this.searchTo = '';
       this.departureDate = '';
+      this.minCost = 0;
+      this.maxCost = 0;
     
       this.router.navigate([], {
         relativeTo: this.route,
-        queryParams: { from: null, to: null, date: null },
+        queryParams: { from: null, to: null, date: null, minCost: null, maxCost: null },
         queryParamsHandling: 'merge'
       });
     }
 
     this.route.queryParams.subscribe(params => {
-      this.searchFrom = params['from'] || '';
-      this.searchTo = params['to'] || '';
-      this.departureDate = params['date'] || '';
-      this.executeSearch(this.searchFrom, this.searchTo, this.departureDate);
-    });
+    this.searchFrom = params['from'] || '';
+    this.searchTo = params['to'] || '';
+    this.departureDate = params['date'] || '';
+
+    this.minCost = params['minCost'] ? +params['minCost'] : 0;
+    this.maxCost = params['maxCost'] ? +params['maxCost'] : 0;
+    
+    this.executeSearch(this.searchFrom, this.searchTo, this.departureDate, this.minCost, this.maxCost);
+  });
   }
 
-  executeSearch(from?: string, to?: string, date?: string) {
-    this.isLoading = true; 
-    this.tripService.getTrips(from, to, date).subscribe({
-      next: (data) => {
-        this.trips = [...data];
-        this.isLoading = false;
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error('Trips are not available:', err);
-        this.isLoading = false;
+  executeSearch(from?: string, to?: string, date?: string, minCost?: number, maxCost?: number) {
+  this.isLoading = true; 
+  this.tripService.getTrips(from, to, date, minCost, maxCost).subscribe({
+    next: (data) => {
+      this.trips = [...data];
+      this.isLoading = false;
+
+  
+      if (this.trips.length > 0) {
+  
+        const prices = this.trips.map(trip => trip.total_cost);
+        
+        const computedMin = Math.min(...prices);
+        const computedMax = Math.max(...prices);
+
+  
+        if (!minCost && !maxCost) {
+          this.minCost = computedMin;
+          this.maxCost = computedMax;
+        }
       }
-    });
-  }
+
+      this.cdr.detectChanges();
+    },
+    error: (err) => {
+      console.error('Trips are not available:', err);
+      this.isLoading = false;
+    }
+  });
+}
 
   onSearch(): void {
     this.router.navigate([], {
@@ -87,7 +114,9 @@ export class Home implements OnInit {
       queryParams: {
         from: this.searchFrom || null,
         to: this.searchTo || null,
-        date: this.departureDate || null
+        date: this.departureDate || null,
+        minCost: this.minCost || null,
+        maxCost: this.maxCost || null
       },
       queryParamsHandling: 'merge'
     });

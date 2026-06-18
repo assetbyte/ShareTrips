@@ -109,6 +109,25 @@
     Want to publish your trip? <a routerLink="/login" style="color: #2563eb; font-weight: 600; text-decoration: none;">Log in to your account</a>.
   </div>
 
+  
+  <h3 style="margin-top: 0; margin-bottom: 12px; color: #1f2937; font-size: 16px; font-weight: 600; background: #ffffff; padding: 20px; border-radius: 12px; margin-bottom: 30px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); border: 1px solid #e5e7eb;">Filter by price range
+    <div style="padding: 0 10px;">
+    <mat-slider [min]="0" [max]="250000" step="43" style="width: 100%;">
+      <input matSliderStartThumb [(ngModel)]="minCost" (change)="onSearch()">
+      <input matSliderEndThumb [(ngModel)]="maxCost" (change)="onSearch()">
+    </mat-slider>
+  </div>
+
+  <div style="display: flex; justify-content: center; gap: 8px; margin-top: 8px; font-size: 15px; font-weight: 600; color: #2563eb;">
+    <span>{{ minCost }} ₸</span>
+    <span style="color: #6b7280; font-weight: normal;">-</span>
+    <span>{{ maxCost }} ₸</span>
+  </div>
+  </h3>
+  
+  
+  
+
   <h3 style="padding-bottom: 12px; font-size: 20px; font-weight: 700; color: #1f2937; margin-bottom: 20px;">Travel companions routes:</h3>
 
   <div *ngIf="isLoading" style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 50px 0;">

@@ -28,6 +28,13 @@ class TripViewSet(viewsets.ModelViewSet):
         departure_from = self.request.query_params.get("from")
         departure_to = self.request.query_params.get("to")
         departure_date = self.request.query_params.get("date")
+        min_price = self.request.query_params.get("min_price")
+        max_price = self.request.query_params.get("max_price")
+        
+        if min_price:
+            queryset = queryset.filter(total_cost__gte=min_price)
+        if max_price:
+            queryset = queryset.filter(total_cost__lte=max_price)
         
         if departure_from:
             queryset = queryset.filter(departure_from__icontains=departure_from)
