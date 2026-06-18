@@ -27,12 +27,16 @@ class TripViewSet(viewsets.ModelViewSet):
         
         departure_from = self.request.query_params.get("from")
         departure_to = self.request.query_params.get("to")
+        departure_date = self.request.query_params.get("date")
         
         if departure_from:
             queryset = queryset.filter(departure_from__icontains=departure_from)
         if departure_to:
             queryset = queryset.filter(departure_to__icontains=departure_to)
-           
+        if departure_date:
+            queryset = queryset.filter(departure_date=departure_date)
+            
+               
         return queryset 
 
     def get_serializer_class(self):

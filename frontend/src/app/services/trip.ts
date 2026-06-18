@@ -23,7 +23,7 @@ export class TripService {
     });
   }
 
-  getTrips(from?: string, to?: string): Observable<TripInfo[]> {
+  getTrips(from?: string, to?: string, date?:string): Observable<TripInfo[]> {
     let params = new HttpParams();
 
     if (from) {
@@ -32,6 +32,10 @@ export class TripService {
 
     if (to) {
       params = params.set('to', to);
+    }
+
+    if (date) {
+      params = params.set('date', date);
     }
 
     return this.http.get<TripInfo[]>(this.apiUrl, { params }); 

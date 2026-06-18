@@ -23,6 +23,7 @@ export class Home implements OnInit {
 
   searchFrom: string = '';
   searchTo: string = '';
+  departureDate: string = '';
 
   newTrip: TripCreateData = {
     departure_from: '',
@@ -45,13 +46,14 @@ export class Home implements OnInit {
 
   ngOnInit(): void {
     const snapshotParams = this.route.snapshot.queryParams;
-    if (snapshotParams['from'] || snapshotParams['to']) {
+    if (snapshotParams['from'] || snapshotParams['to'] || snapshotParams["date"]) {
       this.searchFrom = '';
       this.searchTo = '';
+      this.departureDate = '';
     
       this.router.navigate([], {
         relativeTo: this.route,
-        queryParams: { from: null, to: null },
+        queryParams: { from: null, to: null, date: null },
         queryParamsHandling: 'merge'
       });
     }
@@ -59,13 +61,14 @@ export class Home implements OnInit {
     this.route.queryParams.subscribe(params => {
       this.searchFrom = params['from'] || '';
       this.searchTo = params['to'] || '';
-      this.executeSearch(this.searchFrom, this.searchTo);
+      this.departureDate = params['date'] || '';
+      this.executeSearch(this.searchFrom, this.searchTo, this.departureDate);
     });
   }
 
-  executeSearch(from?: string, to?: string) {
+  executeSearch(from?: string, to?: string, date?: string) {
     this.isLoading = true; 
-    this.tripService.getTrips(from, to).subscribe({
+    this.tripService.getTrips(from, to, date).subscribe({
       next: (data) => {
         this.trips = [...data];
         this.isLoading = false;
@@ -83,7 +86,8 @@ export class Home implements OnInit {
       relativeTo: this.route,
       queryParams: {
         from: this.searchFrom || null,
-        to: this.searchTo || null
+        to: this.searchTo || null,
+        date: this.departureDate || null
       },
       queryParamsHandling: 'merge'
     });
