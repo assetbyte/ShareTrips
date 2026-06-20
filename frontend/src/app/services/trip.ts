@@ -52,9 +52,14 @@ export class TripService {
     return this.http.post<TripInfo>(this.apiUrl, tripData, { headers });
   }
 
-  applyForTrip(tripId: number): Observable<any>{
+  applyForTrip(tripId: number, application_message: string): Observable<any> {
     const headers = this.getAuthHeaders();
-    return this.http.post(this.appUrl, { trip: tripId }, { headers });
+    const body = { 
+      trip: tripId, 
+      application_message: application_message 
+    };
+
+    return this.http.post(this.appUrl, body, { headers });
   }
 
   getMyApplications(): Observable<any[]> {

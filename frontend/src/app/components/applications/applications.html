@@ -6,21 +6,29 @@
 
   <div style="display: grid; gap: 16px;">
     <div *ngFor="let app of incomingApplications" 
-         style="background: white; border: 1px solid #e5e7eb; padding: 20px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+         style="background: white; border: 1px solid #e5e7eb; padding: 20px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
       
-      <div>
+      <div style="flex: 1; min-width: 280px;">
         <p style="margin: 0 0 6px 0; font-size: 16px; color: #1f2937;">
           Passenger: <strong style="color: #2563eb;">@{{ app.applier.username }}</strong>
         </p>
         <p style="margin: 0 0 6px 0; font-size: 14px; color: #4b5563;">
           Route: <span style="font-weight: 600; color: #111827;">{{ app.trip.departure_from }} ➔ {{ app.trip.departure_to }}</span>
         </p>
-        <p style="margin: 0; font-size: 13px; color: #6b7280;">
+        <p style="margin: 0 0 14px 0; font-size: 13px; color: #6b7280;">
           Departure date: {{ app.trip.departure_date | date:'dd.MM.yyyy' }}
         </p>
+
+        <div *ngIf="app.application_message" 
+             style="background: #f8fafc; border-left: 4px solid #cbd5e1; padding: 10px 14px; border-radius: 0 8px 8px 0; font-size: 13.5px; color: #334155; line-height: 1.5; margin-top: 10px; font-style: italic;">
+          <span style="font-weight: 600; color: #64748b; font-style: normal; display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
+            Message:
+          </span>
+          "{{ app.application_message }}"
+        </div>
       </div>
 
-      <div style="display: flex; align-items: center; gap: 12px;">
+      <div style="display: flex; align-items: center; gap: 12px; align-self: center;">
         <div *ngIf="app.status === 'pending'" style="display: flex; gap: 8px;">
           <button (click)="onAccept(app.id)" 
                   style="background: #16a34a; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; transition: background 0.2s;">

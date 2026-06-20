@@ -64,13 +64,13 @@ class TripApplicationSerializer(serializers.ModelSerializer):
     trip = TripSerializer(read_only = True)
     class Meta:
         model = TripApplication
-        fields = ['id', 'trip', 'applier', 'status', 'applied_at']
+        fields = ['id', 'trip', 'applier', 'status', 'applied_at', 'application_message']
         
 #post подать заявки на поездку
 class TripApplicationCreateSeriazlier(serializers.ModelSerializer):
     class Meta:
         model = TripApplication
-        fields = ['id', 'trip']
+        fields = ['id', 'trip', 'application_message']
         
     def validate(self, attrs):
         request = self.context.get("request")

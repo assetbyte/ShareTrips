@@ -7,11 +7,13 @@ import { TripService } from '../../services/trip';
 import { TripInfo, TripCreateData } from '../../models/trip.model';
 import { min } from 'rxjs';
 import { MatSliderModule } from '@angular/material/slider';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { ApplyMessage } from '../apply-message/apply-message';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, MatSliderModule],
+  imports: [CommonModule, FormsModule, RouterLink, MatSliderModule, MatDialogModule],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
@@ -46,6 +48,7 @@ export class Home implements OnInit {
     public authService: Auth,
     private cdr: ChangeDetectorRef,
     private router: Router,
+    private dialog: MatDialog,
     private route: ActivatedRoute
   ) {};
 
@@ -173,41 +176,52 @@ export class Home implements OnInit {
   onApply(tripId: number) {
     this.errorMessage[tripId] = '';
 
-    this.tripService.applyForTrip(tripId).subscribe({
-      next: (response) => {
-        alert('Success! Your request was sent to the publisher');
-        this.cdr.detectChanges(); 
-      },
-      error: (err) => {
-        console.error('Catch application error:', err);
+    const dialogRef = this.dialog.open(ApplyMessage, {
+      width: '1000px',
+      data: { tripId: tripId }
+    });
 
-        if (!err.error) {
-          this.errorMessage[tripId] = 'Something went wrong. Please try again later.';
-          this.cdr.detectChanges(); 
-          return;
-        }
-
-        if (typeof err.error === 'string') {
-          this.errorMessage[tripId] = err.error;
-        } 
-        else if (Array.isArray(err.error)) {
-          this.errorMessage[tripId] = err.error[0];
-        } 
-        else if (typeof err.error === 'object') {
-          const firstKey = Object.keys(err.error)[0];
-          const errorValue = err.error[firstKey];
-
-          if (Array.isArray(errorValue)) {
-            this.errorMessage[tripId] = errorValue[0];
-          } else if (typeof errorValue === 'string') {
-            this.errorMessage[tripId] = errorValue;
-          } else {
-            this.errorMessage[tripId] = JSON.stringify(errorValue);
-          }
-        }
-        
-        this.cdr.detectChanges(); 
+    dialogRef.afterClosed().subscribe((resultMessage: string) => {
+      if (!resultMessage) {
+        return; 
       }
+
+      this.tripService.applyForTrip(tripId, resultMessage).subscribe({
+        next: (response) => {
+          alert('Success! Your request was sent to the publisher');
+          this.cdr.detectChanges(); 
+        },
+        error: (err) => {
+          console.error('Catch application error:', err);
+
+          if (!err.error) {
+            this.errorMessage[tripId] = 'Something went wrong. Please try again later.';
+            this.cdr.detectChanges(); 
+            return;
+          }
+
+          if (typeof err.error === 'string') {
+            this.errorMessage[tripId] = err.error;
+          } 
+          else if (Array.isArray(err.error)) {
+            this.errorMessage[tripId] = err.error[0];
+          } 
+          else if (typeof err.error === 'object') {
+            const firstKey = Object.keys(err.error)[0];
+            const errorValue = err.error[firstKey];
+
+            if (Array.isArray(errorValue)) {
+              this.errorMessage[tripId] = errorValue[0];
+            } else if (typeof errorValue === 'string') {
+              this.errorMessage[tripId] = errorValue;
+            } else {
+              this.errorMessage[tripId] = JSON.stringify(errorValue);
+            }
+          }
+          
+          this.cdr.detectChanges(); 
+        }
+      });
     });
   }
 }

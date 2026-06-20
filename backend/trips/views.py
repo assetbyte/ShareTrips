@@ -76,7 +76,7 @@ class TripApplicationViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['post'], url_path='accept')
     def accept_application(self, request, pk=None):
         application = self.get_object()
-        
+    
         if application.trip.creator != request.user:
             return Response(
                 {"detail": "You are not the creator of this trip!"}, 
