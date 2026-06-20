@@ -8,9 +8,16 @@ from django.db.models import Avg
 
 #гланый сериализатор чтоб вытаскивать инфу о пользователе и его профиле и отзывах 
 class UserSerializer(serializers.ModelSerializer):
+    average_rating = serializers.SerializerMethodField()
+
     class Meta:
         model = User
-        fields = ['id', 'username', 'email']
+        fields = ['id', 'username', 'first_name', 'last_name', 'average_rating']
+
+    def get_average_rating(self, object):
+        rating_data = object.reviews_received.aggregate(Avg('rating'))
+        avg = rating_data['rating__avg']
+        return round(avg, 1) if avg is not None else 0.0
 #get
 class ProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
@@ -25,6 +32,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         current_user = object.user
         rating_data = current_user.reviews_received.aggregate(Avg('rating'))
         avg = rating_data['rating__avg']
+        return round(avg, 1) if avg is not None else 0.0
 #get 
 class ReviewSerializer(serializers.ModelSerializer):
     user_sender = UserSerializer(read_only=True)
