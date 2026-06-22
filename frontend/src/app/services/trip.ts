@@ -94,4 +94,9 @@ export class TripService {
     const headers = this.getAuthHeaders(); 
     return this.http.delete<void>(`${this.apiUrl}${tripId}/`, { headers });
   }
+
+  kickTeammate(id: number): Observable<any> {
+    const headers = this.getAuthHeaders()
+    return this.http.post(`${this.appUrl}${id}/kick/`, {}, {headers})
+  }
 }

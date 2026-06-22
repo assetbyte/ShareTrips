@@ -149,3 +149,21 @@ class TripApplicationViewSet(viewsets.ModelViewSet):
         
         serializer = TripApplicationSerializer(team, many=True, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    @action(detail=True, methods=['post'], url_path='kick')
+    def kick_teammate(self, request, pk=None): 
+        application = self.get_object()
+        
+        if application.trip.creator != request.user:
+            return Response({"detail": "You are not allowed to kick anyone from this trip!"}, 
+                status=status.HTTP_403_FORBIDDEN
+            )
+            
+        application.status = "rejected"
+        application.save()
+            
+        return Response({"status": "teammate kicked successfully"}, status=status.HTTP_200_OK)
+                    
+            
+        
+    

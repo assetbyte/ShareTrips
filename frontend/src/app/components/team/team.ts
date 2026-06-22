@@ -68,4 +68,27 @@ export class Team implements OnInit {
     
     alert(`Freedom Pay test! \Route: ${group.departure_from} ➔ ${group.departure_to}\ To pay: ${group.cost_per_person} ₸`);
   }
+
+
+  kickTeammate(tripId: number, teammateId: number): void {
+    if (confirm('Are you sure you want to kick this teammate?')) { 
+      this.tripService.kickTeammate(teammateId).subscribe({
+        next: (data) => {
+          console.log("Teammate kicked successfully", data);
+          alert("Teammate kicked successfully!");
+          
+          const tripGroup = this.groupedTrips.find(g => g.tripId === tripId);
+          if (tripGroup) {
+            tripGroup.applications = tripGroup.applications.filter(app => app.id !== teammateId);
+            tripGroup.accepted_cnt--; 
+          }
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error(err);
+          alert("Something went wrong while kicking teammate");
+        }
+      });
+    }
+  }
 }
