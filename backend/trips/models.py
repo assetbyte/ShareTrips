@@ -26,8 +26,16 @@ class Trip(models.Model):
             return "Trip has ended"
     
 class TripApplication(models.Model):
+    
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('accepted', 'Accepted'),
+        ('rejected', 'Rejected'),
+        ('kicked', 'Kicked'), 
+    ]
+    
     trip = models.ForeignKey(Trip, on_delete=models.CASCADE, related_name='applications') # одна поездка может иметь несколько заявок
     applier = models.ForeignKey(User, on_delete=models.CASCADE, related_name='trip_applications') # один пользователь может подать несколько заявок
-    status = models.CharField(max_length=20, default='pending') # pending, accepted, rejected
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending') # pending, accepted, rejected
     applied_at = models.DateTimeField(auto_now_add=True)
     application_message = models.TextField()

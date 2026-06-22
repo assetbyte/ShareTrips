@@ -93,10 +93,13 @@ class TripApplicationCreateSeriazlier(serializers.ModelSerializer):
         if not user:
             return attrs
         
-        if TripApplication.objects.filter(applier=user, trip=current_trip).exists():
+        if TripApplication.objects.filter(applier=user, trip=current_trip, status__in=['pending', 'accepted']).exists():
             raise ValidationError("You have already applied for this trip!")
         
-            
+        if TripApplication.objects.filter(applier=user, trip=current_trip, status='kicked').exists():
+            raise ValidationError("The driver has removed you from this trip. You cannot apply again.")
+                
+                    
         #validation from mass requests
         
         last_application = TripApplication.objects.filter(applier=user).exclude(

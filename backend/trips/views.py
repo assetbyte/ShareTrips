@@ -159,7 +159,7 @@ class TripApplicationViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_403_FORBIDDEN
             )
             
-        application.status = "rejected"
+        application.status = "kicked"
         application.save()
             
         return Response({"status": "teammate kicked successfully"}, status=status.HTTP_200_OK)
