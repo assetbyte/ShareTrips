@@ -2,12 +2,15 @@ import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
 import { TripService } from '../../services/trip';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-// структура сгруппированной поездки
+
 export interface GroupedTrip {
   tripId: number;
   departure_from: string;
   departure_to: string;
   departure_date: string;
+  total_cost: number;        
+  accepted_cnt: number;      
+  cost_per_person: number; 
   applications: any[]; // accepteds
 }
 
@@ -47,6 +50,9 @@ export class Team implements OnInit {
             departure_from: app.trip.departure_from,
             departure_to: app.trip.departure_to,
             departure_date: app.trip.departure_date,
+            total_cost: Number(app.trip.total_cost),
+            accepted_cnt: app.trip.accepted_cnt,
+            cost_per_person: app.trip.cost_per_person,
             applications: []
           };
         }
@@ -56,5 +62,10 @@ export class Team implements OnInit {
     });
 
     this.groupedTrips = Object.values(groups);
+  }
+
+  onSimulatedPay(group: GroupedTrip): void {
+    
+    alert(`Freedom Pay test! \Route: ${group.departure_from} ➔ ${group.departure_to}\ To pay: ${group.cost_per_person} ₸`);
   }
 }

@@ -1,7 +1,7 @@
 <div class="team-container" style="max-width: 800px; margin: 30px auto; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
   
   <h2 style="color: #1f2937; margin-bottom: 24px; font-weight: 700; font-size: 24px; border-bottom: 2px solid #e5e7eb; padding-bottom: 12px;">
-     Your Travel Teams
+    Your Travel Teams
   </h2>
 
   <p *ngIf="groupedTrips.length === 0" style="color: #6b7280; text-align: center; margin: 40px 0;">
@@ -12,12 +12,12 @@
     
     <div style="background: #f8fafc; padding: 16px 20px; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
       <h3 style="margin: 0; color: #1e40af; font-size: 18px; font-weight: 700;">
-         {{ group.departure_from }} <span style="color: #9ca3af; font-weight: normal; margin: 0 4px;">➔</span> {{ group.departure_to }}
+        {{ group.departure_from }} <span style="color: #9ca3af; font-weight: normal; margin: 0 4px;">➔</span> {{ group.departure_to }}
       </h3>
       
       <div style="display: flex; align-items: center; gap: 12px;">
         <span style="background: #dbeafe; color: #1e40af; padding: 6px 14px; border-radius: 9999px; font-size: 13px; font-weight: 600;">
-           {{ group.departure_date | date:'dd.MM.yyyy' }}
+          {{ group.departure_date | date:'dd.MM.yyyy' }}
         </span>
         
         <button [routerLink]="['/chat', group.tripId]" 
@@ -28,6 +28,7 @@
     </div>
 
     <div style="padding: 20px;">
+      
       <h4 style="margin: 0 0 12px 0; color: #4b5563; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
         Teammates ({{ group.applications.length }}):
       </h4>
@@ -54,7 +55,40 @@
         </div>
       </div>
 
-    </div>
-  </div>
+      <div style="margin-top: 24px; padding: 20px; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+        
+        <h4 style="margin: 0 0 16px 0; color: #1f2937; font-size: 16px; font-weight: 700; letter-spacing: -0.3px;">
+          Financial Split
+        </h4>
 
-</div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; margin-bottom: 20px;">
+          
+          <div style="background: #f9fafb; padding: 12px; border-radius: 8px; border: 1px solid #f3f4f6;">
+            <span style="display: block; font-size: 11px; color: #6b7280; font-weight: 600; text-transform: uppercase; margin-bottom: 4px;">Total Cost</span>
+            <strong style="font-size: 16px; color: #111827;">{{ group.total_cost | currency:'KZT':'symbol-narrow':'1.0-0' }}</strong>
+          </div>
+
+          <div style="background: #f9fafb; padding: 12px; border-radius: 8px; border: 1px solid #f3f4f6;">
+            <span style="display: block; font-size: 11px; color: #6b7280; font-weight: 600; text-transform: uppercase; margin-bottom: 4px;">Team Size</span>
+            <strong style="font-size: 16px; color: #111827;">{{ 1 + group.accepted_cnt }} people</strong>
+          </div>
+
+          <div style="background: #eff6ff; padding: 12px; border-radius: 8px; border: 1px solid #dbeafe;">
+            <span style="display: block; font-size: 11px; color: #2563eb; font-weight: 700; text-transform: uppercase; margin-bottom: 4px;">Your Share</span>
+            <strong style="font-size: 18px; color: #1d4ed8; font-weight: 800;">{{ group.cost_per_person | currency:'KZT':'symbol-narrow':'1.0-0' }}</strong>
+          </div>
+
+        </div>
+
+        <div style="display: flex; justify-content: flex-end;">
+          <button 
+            (click)="onSimulatedPay(group)"
+            style="background: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.2s; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 2px 4px rgba(37, 99, 235, 0.1);"
+            onmouseover="this.style.background='#1d4ed8'"
+            onmouseout="this.style.background='#2563eb'"
+          >
+            <span></span> Pay Your Share
+          </button>
+        </div>
+
+      </div> </div> </div> </div>

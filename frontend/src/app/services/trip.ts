@@ -89,4 +89,9 @@ export class TripService {
     const headers = this.getAuthHeaders()
     return this.http.get<any[]>(`${this.appUrl}my_team/`, {headers})
   }
+
+  deleteTrip(tripId: number): Observable<void> {
+    const headers = this.getAuthHeaders(); 
+    return this.http.delete<void>(`${this.apiUrl}${tripId}/`, { headers });
+  }
 }

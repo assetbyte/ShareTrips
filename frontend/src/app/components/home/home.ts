@@ -21,6 +21,8 @@ export class Home implements OnInit {
   trips: TripInfo[] = [];
   isLoading: boolean = false;
 
+  currentUserId: number | null = null;
+
   errorMessage: { [key: number]: string } = {};
 
   createTripErrors: { [key: string]: string } = {};
@@ -53,6 +55,7 @@ export class Home implements OnInit {
   ) {};
 
   ngOnInit(): void {
+    this.getCurrentUser();
     const snapshotParams = this.route.snapshot.queryParams;
     if (snapshotParams['from'] || snapshotParams['to'] || snapshotParams["date"] || snapshotParams["minCost"] || snapshotParams["maxCost"]) {
       this.searchFrom = '';
@@ -109,6 +112,7 @@ export class Home implements OnInit {
       this.isLoading = false;
     }
   });
+
 }
 
   onSearch(): void {
@@ -123,6 +127,13 @@ export class Home implements OnInit {
       },
       queryParamsHandling: 'merge'
     });
+  }
+
+  getCurrentUser(): void {
+    const savedId = localStorage.getItem('user_id');
+    if (savedId) {
+      this.currentUserId = Number(savedId);
+    }
   }
 
   onCreateTrip() {
@@ -224,4 +235,26 @@ export class Home implements OnInit {
       });
     });
   }
+
+  onDeleteTrip(tripId: number): void {
+  if (confirm('Are you sure you want to delete this trip?')) {
+    this.tripService.deleteTrip(tripId).subscribe({
+      next: () => {
+        this.trips = this.trips.filter(t => t.id !== tripId);
+        alert('Trip deleted successfully!');
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error(err);
+        if (err.error && err.error.detail) {
+          alert(err.error.detail);
+        } else if (err.error && typeof err.error === 'string') {
+          alert(err.error);
+        } else {
+          alert('Failed to delete the trip. Something went wrong.');
+        }
+      }
+    });
+  }
+}
 }

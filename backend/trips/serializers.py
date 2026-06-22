@@ -9,24 +9,35 @@ from accounts.serializers import UserSerializer
 class TripSerializer(serializers.ModelSerializer):
     remaining_seats = serializers.SerializerMethodField()
     creator = UserSerializer(read_only=True)   
-    
     total_seats = serializers.IntegerField(required=False)
+    
+    accepted_cnt = serializers.SerializerMethodField()
+    cost_per_person = serializers.SerializerMethodField()
     
     class Meta:
         model = Trip
         fields = [
             'id', 'creator', 'departure_from', 'departure_to', 
             'departure_date', 'return_date', 'total_cost', 
-            'total_seats', 'remaining_seats', 'application_deadline'  
-            ,'status'  
+            'total_seats', 'remaining_seats', 'application_deadline',
+            'status',
+            'accepted_cnt', 'cost_per_person'  
         ]
 
+    def get_accepted_cnt(self, obj):
+        return obj.applications.filter(status='accepted').count()
+
     def get_remaining_seats(self, obj):
-        #сколько уже занято
-        accepted_applications = obj.applications.filter(status='accepted').count()
-        #остаток мест
-        return obj.total_seats - accepted_applications
+        accepted_passengers = self.get_accepted_cnt(obj)
+        return obj.total_seats - accepted_passengers
+
+    def get_cost_per_person(self, obj):
+        accepted_passengers = self.get_accepted_cnt(obj)
+        
+        
+        total_people = 1 + accepted_passengers
     
+        return round(obj.total_cost / total_people, 0) 
 #post создать поездку      
 class TripCreateSerializer(serializers.ModelSerializer):
     return_date = serializers.DateField(required=False, allow_null=True)

@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticate
 from rest_framework.decorators import action
 from django.db.models import Q  #сложные фильтры 
 import time
+from django.core.exceptions import PermissionDenied, ValidationError
 
 from .models import Trip, TripApplication
 from .serializers import (
@@ -53,6 +54,15 @@ class TripViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(creator=self.request.user)
+        
+    def perform_destroy(self, instance):
+        if instance.creator != self.request.user:
+            raise PermissionDenied("Trip could be deleted only by the creator! Not allowed!")
+        if instance.applications.filter(status="accepted").exists():
+            raise ValidationError("You cannot delete a trip if it has a travelers!")
+        
+        else:
+            instance.delete()
 
 
 class TripApplicationViewSet(viewsets.ModelViewSet):
