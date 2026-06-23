@@ -48,6 +48,21 @@ class TripCreateSerializer(serializers.ModelSerializer):
                 'departure_date', 'return_date', 'application_deadline', 'total_cost', 'total_seats'
             ]
         
+    def validate_departure_date(self, value):
+        if value < timezone.now().date():
+            raise ValidationError("The departure date cannot be in the past.")
+        return value
+
+    def validate_application_deadline(self, value):
+        if value < timezone.now().date():
+            raise ValidationError("The application deadline cannot be in the past.")
+        return value
+    
+    def validate_return_date(self, value):
+        if value < timezone.now().date():
+             raise ValidationError("Return date cannot be in the past")
+            
+        
     def validate(self , attrs):
         #дата отправки < дата возвращения 
         #заявки принимаются МАКСИМУМ за два дня до отправления. 
