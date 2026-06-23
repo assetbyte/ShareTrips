@@ -99,4 +99,9 @@ export class TripService {
     const headers = this.getAuthHeaders()
     return this.http.post(`${this.appUrl}${id}/kick/`, {}, {headers})
   }
+
+  selfLeaveTrip(applcationId: number, tripId: number): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.delete(`${this.appUrl}${applcationId}/`, {headers})
+  }
 }

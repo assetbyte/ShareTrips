@@ -76,6 +76,12 @@ class TripApplicationViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(applier=self.request.user)
         
+    
+    def perform_destroy(self, instance):
+        if instance.applier != self.request.user:
+            raise PermissionDenied("You can only delete your own travel requests!")
+        instance.delete()
+            
     def get_queryset(self):
         user = self.request.user
         return TripApplication.objects.filter(
@@ -159,6 +165,7 @@ class TripApplicationViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_403_FORBIDDEN
             )
             
+        
         application.status = "kicked"
         application.save()
             

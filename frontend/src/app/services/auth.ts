@@ -39,4 +39,9 @@ export class Auth {
   getToken(): string | null {
     return localStorage.getItem('token');
   }
+
+  getCurrentUserId(): number | null {
+    const userId = localStorage.getItem('user_id');
+    return userId ? Number(userId) : null;
+  }
 }
