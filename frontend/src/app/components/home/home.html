@@ -75,6 +75,9 @@
       <div>
         <label style="display: block; margin-bottom: 6px; font-size: 14px; font-weight: 500; color: #4b5563;">Travel date:</label>
         <input type="date" [(ngModel)]="newTrip.departure_date" style="width: 100%; padding: 9px 12px; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+        <small *ngIf="createTripErrors['departure_date']" style="color: #dc2626; font-size: 12px; margin-top: 4px; display: block;">
+          {{ createTripErrors['departure_date'] }}
+        </small>
       </div>
       <div>
         <label style="display: block; margin-bottom: 6px; font-size: 14px; font-weight: 500; color: #4b5563;">Return Date <span style="color: #9ca3af; font-weight: normal;">(Optional)</span>:</label>
