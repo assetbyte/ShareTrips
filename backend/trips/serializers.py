@@ -103,7 +103,7 @@ class TripApplicationCreateSeriazlier(serializers.ModelSerializer):
         #validation from mass requests
         
         last_application = TripApplication.objects.filter(applier=user).exclude(
-            status='rejected').select_related('trip').order_by('-trip__departure_date').first()
+            status__in=['rejected', 'kicked']).select_related('trip').order_by('-trip__departure_date').first()
         #user will be able to apply to trip if status before was: rejected
         
         if last_application:
