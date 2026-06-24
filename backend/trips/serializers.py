@@ -119,12 +119,12 @@ class TripApplicationCreateSeriazlier(serializers.ModelSerializer):
         
         last_application = TripApplication.objects.filter(applier=user).exclude(
             status__in=['rejected', 'kicked']).select_related('trip').order_by('-trip__departure_date').first()
+        
         #user will be able to apply to trip if status before was: rejected
         
         if last_application:
             last_trip = last_application.trip
             trip_end_date = last_trip.return_date if last_trip.return_date else last_trip.departure_date
-    
     
             application_blocked_until = trip_end_date + timedelta(days=3)
     

@@ -29,7 +29,7 @@
   </div>
 
   <h3>Feedback feed</h3>
-  <p *ngIf="reviews.length === 0" style="color: gray;">Отзывов пока нет...</p>
+  <p *ngIf="reviews.length === 0" style="color: gray;">No reviews written</p>
 
   <div *ngFor="let review of reviews" style="border: 1px solid #ccc; padding: 15px; margin-bottom: 10px; border-radius: 8px; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
     <p><strong>From whom:</strong> {{ review.user_sender.username }}</p>
