@@ -1,41 +1,15 @@
-<div style="max-width: 600px; margin: 0 auto;">
+<div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+  <h3 style="color: #1f2937; font-size: 20px; font-weight: 700; margin-bottom: 15px;">Feedback feed</h3>
   
-  <div *ngIf="authService.isLoggedIn()" style="background: #e1f5fe; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-    <h3>Leave a new review</h3>
-    
-    <label>Recipient username</label><br>
-    <input type="text" [(ngModel)]="newReview.user_receiver" style="width: 100%; margin-bottom: 10px; padding: 5px;"><br>
+  <p *ngIf="reviews.length === 0" style="color: gray;">No reviews written yet.</p>
 
-    <label>Stars:</label><br>
-    <select [(ngModel)]="newReview.rating" style="width: 100%; margin-bottom: 10px; padding: 5px;">
-      <option [ngValue]="5">5</option>
-      <option [ngValue]="4">4</option>
-      <option [ngValue]="3">3</option>
-      <option [ngValue]="2">2</option>
-      <option [ngValue]="1">1</option>
-    </select>
-    <br>
-
-    <label>Comment:</label><br>
-    <textarea [(ngModel)]="newReview.comment" placeholder="Write an honest review..." style="width: 100%; height: 60px; margin-bottom: 10px; padding: 5pxpx;"></textarea><br>
-
-    <button (click)="sendReview()" style="background: #28a745; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; width: 100%;">
-      Send
-    </button>
-  </div>
-
-  <div *ngIf="!authService.isLoggedIn()" style="background: #fff3cd; color: #856404; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
-    <strong>Attention:</strong> To write reviews, please log in first.
-  </div>
-
-  <h3>Feedback feed</h3>
-  <p *ngIf="reviews.length === 0" style="color: gray;">No reviews written</p>
-
-  <div *ngFor="let review of reviews" style="border: 1px solid #ccc; padding: 15px; margin-bottom: 10px; border-radius: 8px; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-    <p><strong>From whom:</strong> {{ review.user_sender.username }}</p>
-    <p><strong>To whom:</strong> {{ review.user_receiver.username }}</p>
-    <p><strong>Stars:</strong> {{ review.rating }}/5</p>
-    <p><strong>Comment:</strong> {{ review.comment }}</p>
-    <small style="color: gray;">{{ review.created_at | date:'dd.MM.yyyy в HH:mm' }}</small>
+  <div *ngFor="let review of reviews" style="border: 1px solid #e5e7eb; padding: 15px; margin-bottom: 12px; border-radius: 8px; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+    <p><strong>From:</strong> @{{ review.user_sender.username }}</p>
+    <p><strong>To:</strong> @{{ review.user_receiver.username }}</p>
+    <p><strong>Rating:</strong> {{ '★'.repeat(review.rating) }}{{ '☆'.repeat(5 - review.rating) }} ({{ review.rating }}/5)</p>
+    <p style="margin-top: 8px; color: #4b5563;"><strong>Comment:</strong> {{ review.comment }}</p>
+    <div style="margin-top: 10px; text-align: right;">
+      <small style="color: #9ca3af;">{{ review.created_at | date:'dd.MM.yyyy HH:mm' }}</small>
+    </div>
   </div>
 </div>

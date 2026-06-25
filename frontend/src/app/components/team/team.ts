@@ -104,7 +104,7 @@ export class Team implements OnInit {
           next: () => {
             alert(`Review for @${receiver.username} submitted successfully!`);
           },
-          error: (err: any) => { // ИСПРАВЛЕНИЕ: Явный тип для err
+          error: (err: any) => { 
             console.error(err);
             alert('Failed to submit review. Maybe you already reviewed them?');
           }

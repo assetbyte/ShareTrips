@@ -39,20 +39,4 @@ export class Reviews implements OnInit {
       error: (err) => console.error('Error', err)
     });
   }
-
-  sendReview(): void {
-    if (!this.newReview.comment.trim()) return;
-
-    this.reviewService.createReview(this.newReview).subscribe({
-      next: (savedReview) => {
-        alert('Review added');
-        this.newReview.comment = '';
-        this.loadReviews();
-      },
-      error: (err) => {
-        console.error('Error', err);
-        alert('Error occured while sending your review');
-      }
-    });
-  }
 }
