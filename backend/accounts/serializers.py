@@ -125,14 +125,37 @@ class RegistrationSerializer(serializers.ModelSerializer):
         return profile
 #post
 class ReviewCreateSerializer(serializers.ModelSerializer):
-    user_receiver = serializers.SlugRelatedField(
-        slug_field='username',
-        queryset=User.objects.all())
     class Meta:
         
         model = Review
-        fields = ['id', 'user_receiver', 'rating', 'comment'] #created_at
+        fields = ['id', 'trip', 'user_receiver', 'rating', 'comment'] #created_at
         #user sender через user_sender = self.request.user получу
+        
+    def validate(self, attrs):
+        user_sender = self.context['request'].user
+        user_receiver = attrs.get('user_receiver')
+        trip = attrs.get('trip')
+        
+        
+        if trip.status != "Trip has ended":
+            raise ValidationError("You can leave review for your teammates only when you current trip will end")
+        
+        accepted_passengers = list(trip.applications.filter(status="accepted").values_list('applier', flat=True))
+        all_participants = accepted_passengers + [trip.creator.id]
+        
+        if user_sender.id not in all_participants:
+            raise ValidationError("You did not participate in this trip.")
+        if user_receiver.id not in all_participants:
+            raise ValidationError("The recipient did not participate in this trip.")
+        
+        if user_sender == user_receiver:
+            raise ValidationError("You cannot review yourself.")
+        
+        if Review.objects.filter(trip=trip, user_sender=user_sender, user_receiver=user_receiver).exists():
+            raise ValidationError("You have already reviewed this teammate for this trip.")
+        
+        return attrs
+        
         
         
         
