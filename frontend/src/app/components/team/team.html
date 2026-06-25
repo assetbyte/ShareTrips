@@ -16,8 +16,11 @@
       </h3>
       
       <div style="display: flex; align-items: center; gap: 12px;">
-        <span style="background: #dbeafe; color: #1e40af; padding: 6px 14px; border-radius: 9999px; font-size: 13px; font-weight: 600;">
-          {{ group.departure_date | date:'dd.MM.yyyy' }}
+
+        <span [style.background]="group.status === 'Trip has ended' ? '#fee2e2' : '#dbeafe'" 
+              [style.color]="group.status === 'Trip has ended' ? '#991b1b' : '#1e40af'" 
+              style="padding: 6px 14px; border-radius: 9999px; font-size: 13px; font-weight: 600;">
+          {{ group.status === 'Trip has ended' ? 'Finished' : (group.departure_date | date:'dd.MM.yyyy') }}
         </span>
         
         <button [routerLink]="['/chat', group.tripId]" 
@@ -29,6 +32,28 @@
 
     <div style="padding: 20px;">
       
+
+      <div *ngIf="group.status === 'Trip has ended' && group.applications[0]?.trip?.creator?.id !== currentUserId" 
+           style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; margin-bottom: 16px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div style="width: 36px; height: 36px; background: #3b82f6; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px;">
+            DR
+          </div>
+          <div>
+            <p style="margin: 0; font-weight: 600; color: #111827;">@Driver (Trip Creator)</p>
+            <small style="color: #6b7280;">Main Driver of this route</small>
+          </div>
+        </div>
+        <button 
+          (click)="openReviewDialog(group.tripId, group.applications[0]?.trip?.creator)"
+          style="background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; text-transform: uppercase;"
+          onmouseover="this.style.background='#0369a1'; this.style.color='white'"
+          onmouseout="this.style.background='#e0f2fe'; this.style.color='#0369a1'"
+        >
+          Rate Driver
+        </button>
+      </div>
+
       <h4 style="margin: 0 0 12px 0; color: #4b5563; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
         Teammates ({{ group.applications.length }}):
       </h4>
@@ -47,34 +72,56 @@
           </div>
 
           <div style="display: flex; align-items: center; gap: 12px;">
-            <span style="background: #dcfce7; color: #15803d; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; text-transform: uppercase;">
-              Confirmed
-            </span>
+            
+            
+            <ng-container *ngIf="group.status !== 'Trip has ended'">
+              <span style="background: #dcfce7; color: #15803d; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; text-transform: uppercase;">
+                Confirmed
+              </span>
 
-            <button 
-              *ngIf="app.trip.creator.id === currentUserId && app.applier.id !== currentUserId"
-              (click)="kickTeammate(group.tripId, app.id)"
-              style="background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; text-transform: uppercase;"
-              onmouseover="this.style.background='#dc2626'; this.style.color='white'"
-              onmouseout="this.style.background='#fee2e2'; this.style.color='#dc2626'"
-            >
-              Kick teammate
-            </button>
+              <button 
+                *ngIf="app.trip.creator.id === currentUserId && app.applier.id !== currentUserId"
+                (click)="kickTeammate(group.tripId, app.id)"
+                style="background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; text-transform: uppercase;"
+                onmouseover="this.style.background='#dc2626'; this.style.color='white'"
+                onmouseout="this.style.background='#fee2e2'; this.style.color='#dc2626'"
+              >
+                Kick teammate
+              </button>
 
-            <button 
-              *ngIf="app.applier.id === currentUserId"
-              (click)="selfLeaveTrip(app.id, group.tripId)"
-              style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; text-transform: uppercase;"
-              onmouseover="this.style.background='#94a3b8'; this.style.color='white'"
-              onmouseout="this.style.background='#f1f5f9'; this.style.color='#475569'"
-            >
-              Leave Trip
-            </button>
+              <button 
+                *ngIf="app.applier.id === currentUserId"
+                (click)="selfLeaveTrip(app.id, group.tripId)"
+                style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; text-transform: uppercase;"
+                onmouseover="this.style.background='#94a3b8'; this.style.color='white'"
+                onmouseout="this.style.background='#f1f5f9'; this.style.color='#475569'"
+              >
+                Leave Trip
+              </button>
+            </ng-container>
+
+            
+  
+            <ng-container *ngIf="group.status === 'Trip has ended'">
+              <button 
+                *ngIf="app.applier.id !== currentUserId"
+                (click)="openReviewDialog(group.tripId, app.applier)"
+                style="background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; text-transform: uppercase;"
+                onmouseover="this.style.background='#15803d'; this.style.color='white'"
+                onmouseout="this.style.background='#dcfce7'; this.style.color='#15803d'"
+              >
+                Rate Teammate
+              </button>
+              
+              <span *ngIf="app.applier.id === currentUserId" style="background: #f3f4f6; color: #6b7280; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; text-transform: uppercase;">
+                It's You
+              </span>
+            </ng-container>
+
           </div>
 
         </div>
       </div>
-
       <div style="margin-top: 24px; padding: 20px; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
         
         <h4 style="margin: 0 0 16px 0; color: #1f2937; font-size: 16px; font-weight: 700; letter-spacing: -0.3px;">
@@ -102,6 +149,7 @@
 
         <div style="display: flex; justify-content: flex-end;">
           <button 
+            *ngIf="group.status !== 'Trip has ended'"
             (click)="onSimulatedPay(group)"
             style="background: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.2s; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 2px 4px rgba(37, 99, 235, 0.1);"
             onmouseover="this.style.background='#1d4ed8'"
