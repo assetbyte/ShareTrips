@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
@@ -26,7 +26,7 @@ export class ReviewDialog {
   rating: number = 5 //default;
   comment: string = '';
   constructor(public dialogRef: MatDialogRef<ReviewDialog, ReviewResult | null>,
-    @inject(MAT_DIALOG_DATA) public data: {tripId: number; receiver: ReviewReceiver}
+    @Inject(MAT_DIALOG_DATA) public data: {tripId: number; receiver: ReviewReceiver}
   ){}
 
   onCancel(): void {

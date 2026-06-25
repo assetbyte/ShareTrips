@@ -3,12 +3,16 @@ import { TripService } from '../../services/trip';
 import { Auth } from '../../services/auth'; 
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { ReviewService } from '../../services/review';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { ReviewDialog } from '../review-dialog/review-dialog';
 
 export interface GroupedTrip {
   tripId: number;
   departure_from: string;
   departure_to: string;
   departure_date: string;
+  status: string;        
   total_cost: number;        
   accepted_cnt: number;      
   cost_per_person: number; 
@@ -17,7 +21,7 @@ export interface GroupedTrip {
 
 @Component({
   selector: 'app-team',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, MatDialogModule, ReviewDialog],
   standalone: true,
   templateUrl: './team.html',
   styleUrl: './team.scss',
@@ -26,10 +30,11 @@ export class Team implements OnInit {
   groupedTrips: GroupedTrip[] = [];
   currentUserId: number | null = null; 
 
-  
   constructor(
     private tripService: TripService, 
     private authService: Auth, 
+    private reviewService: ReviewService,
+    private dialog: MatDialog,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -41,7 +46,7 @@ export class Team implements OnInit {
         this.groupApplications(data);
         this.cdr.detectChanges();
       },
-      error: (err) => {
+      error: (err: any) => { 
         console.error('Error fetching team data:', err);
       }
     });
@@ -59,6 +64,7 @@ export class Team implements OnInit {
             departure_from: app.trip.departure_from,
             departure_to: app.trip.departure_to,
             departure_date: app.trip.departure_date,
+            status: app.trip.status,
             total_cost: Number(app.trip.total_cost),
             accepted_cnt: app.trip.accepted_cnt,
             cost_per_person: app.trip.cost_per_person,
@@ -73,7 +79,38 @@ export class Team implements OnInit {
   }
 
   onSimulatedPay(group: GroupedTrip): void {
-    alert(`Freedom Pay test! \Route: ${group.departure_from} ➔ ${group.departure_to}\ To pay: ${group.cost_per_person} ₸`);
+    alert(`Freedom Pay test! \nRoute: ${group.departure_from} ➔ ${group.departure_to}\nTo pay: ${group.cost_per_person} ₸`);
+  }
+
+  openReviewDialog(tripId: number, receiver: any): void {
+    const dialogRef = this.dialog.open(ReviewDialog, {
+      width: '500px',
+      data: { 
+        tripId: tripId, 
+        receiver: receiver 
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((result: { rating: number; comment: string } | null) => {
+      if (result) {
+        const reviewData = {
+          trip: tripId,
+          user_receiver: receiver.id, 
+          rating: result.rating,
+          comment: result.comment
+        };
+
+        this.reviewService.createReview(reviewData).subscribe({
+          next: () => {
+            alert(`Review for @${receiver.username} submitted successfully!`);
+          },
+          error: (err: any) => { // ИСПРАВЛЕНИЕ: Явный тип для err
+            console.error(err);
+            alert('Failed to submit review. Maybe you already reviewed them?');
+          }
+        });
+      }
+    });
   }
 
   kickTeammate(tripId: number, teammateId: number): void {
@@ -90,7 +127,7 @@ export class Team implements OnInit {
           }
           this.cdr.detectChanges();
         },
-        error: (err) => {
+        error: (err: any) => {
           console.error(err);
           alert("Something went wrong while kicking teammate");
         }
@@ -114,7 +151,7 @@ export class Team implements OnInit {
           this.groupedTrips = this.groupedTrips.filter(g => g.applications.length > 0);
           this.cdr.detectChanges();
         },
-        error: (err) => {
+        error: (err: any) => {
           alert("Something went wrong!");
         }
       });
