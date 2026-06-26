@@ -12,8 +12,10 @@ from .serializers import ReviewSerializer, ReviewCreateSerializer
 from rest_framework.decorators import authentication_classes
 from rest_framework.authentication import TokenAuthentication
 from .models import Profile
+from django.contrib.auth.models import User
 from .serializers import ProfileSerializer
 from trips.models import Trip, TripApplication
+from django.shortcuts import get_object_or_404
 from trips.serializers import TripSerializer
 
 
@@ -72,20 +74,25 @@ class MyProfileView(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        profile, created = Profile.objects.get_or_create(user=request.user)
-        profile_serializer = ProfileSerializer(profile)
+    def get(self, request, pk=None):
+        if pk is not None:
+            target_user = get_object_or_404(User, pk=pk)
+        else:
+            target_user = request.user
+
+        profile, created = Profile.objects.get_or_create(user=target_user)
+        profile_serializer = ProfileSerializer(profile, context={'request': request})
         
-        created_trips = Trip.objects.filter(creator=request.user).order_by('-departure_date')
-        created_trips_serializer = TripSerializer(created_trips, many=True)
+        created_trips = Trip.objects.filter(creator=target_user).order_by('-departure_date')
+        created_trips_serializer = TripSerializer(created_trips, many=True, context={'request': request})
         
         joined_applications = TripApplication.objects.filter(
-            applier=request.user, 
+            applier=target_user, 
             status='accepted'
         ).select_related('trip')
         
         joined_trips = [app.trip for app in joined_applications]
-        joined_trips_serializer = TripSerializer(joined_trips, many=True)
+        joined_trips_serializer = TripSerializer(joined_trips, many=True, context={'request': request})
     
         return Response({
             "profile": profile_serializer.data,
@@ -93,10 +100,9 @@ class MyProfileView(APIView):
             "my_joined_trips": joined_trips_serializer.data
         })
         
-    def patch(self, request):
+    def patch(self, request, pk=None):
         
         profile = Profile.objects.get(user=request.user)
-        
         serializer = ProfileSerializer(profile, data=request.data, partial=True)
         
         if serializer.is_valid():

@@ -175,7 +175,16 @@
           <p *ngIf="trip.return_date" style="margin: 0;"><strong style="color: #1f2937;">Return date:</strong> {{ trip.return_date | date:'dd.MM.yyyy' }}</p>
           <p style="margin: 0;"><strong style="color: #1f2937;">Deadline for applications:</strong> {{ trip.application_deadline | date:'dd.MM.yyyy' }}</p>
           <p style="margin: 0;"><strong style="color: #1f2937;">Cost:</strong> <span style="color: #111827; font-weight: 600; font-size: 15px;">{{ trip.total_cost }} ₸</span></p>
-          <p style="margin: 0;"><strong style="color: #1f2937;">Publisher:</strong> @{{ trip.creator.username }}</p>
+          <p style="margin: 0;">
+            <strong style="color: #1f2937;">Publisher:</strong> 
+            <span 
+              [routerLink]="['/my-profile', trip.creator.id]" 
+              style="color: #007bff; cursor: pointer; border-bottom: 1px dashed #007bff;"
+              title="View profile"
+            >
+              @{{ trip.creator.username }}
+            </span>
+          </p>
         </div>
 
         <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 10px;">

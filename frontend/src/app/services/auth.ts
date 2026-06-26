@@ -3,6 +3,7 @@ import {HttpClient} from "@angular/common/http";
 import {Observable, tap} from "rxjs";
 import { AuthResponse } from '../models/user.model';
 import { RegistrationData } from '../models/user.model';
+import { HttpHeaders } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
@@ -10,6 +11,7 @@ import { RegistrationData } from '../models/user.model';
 export class Auth { 
   private apiUrl = 'http://localhost:8000/api/auth/login/';
   private registerUrl = 'http://localhost:8000/api/auth/register/';
+  private profileUrl = 'http://localhost:8000/api/auth/profile/';
 
   constructor(private http: HttpClient) {}
   
@@ -44,4 +46,15 @@ export class Auth {
     const userId = localStorage.getItem('user_id');
     return userId ? Number(userId) : null;
   }
+
+  getUserProfile(userId: number): Observable<any> {
+  const token = this.getToken();
+  
+  const headers = new HttpHeaders({
+    'Authorization': `Token ${token}`
+  });
+  return this.http.get<any>(`${this.profileUrl}${userId}/`, { headers });
+}
+
+  
 }

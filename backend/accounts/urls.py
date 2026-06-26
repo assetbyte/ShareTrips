@@ -11,5 +11,5 @@ urlpatterns = [
     path('register/', RegistrationView.as_view(), name='register'),
     path('login/', LoginView.as_view(), name='login'),
     path('', include(router.urls)),
-    path('profile/', MyProfileView.as_view(), name='my-profile')
+    path('profile/<int:pk>/', MyProfileView.as_view(), name='my-profile')
 ]
