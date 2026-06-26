@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { Auth } from '../../services/auth';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { ReviewService } from '../../services/review';
+import { Review } from '../../models/user.model';
+
 
 @Component({
   selector: 'app-my-profile',
@@ -17,12 +20,14 @@ export class MyProfile implements OnInit {
   loading: boolean = true;
   errorMessage: string = '';
   isMe: boolean = false;
+  userReviews: any[] = [];
 
   constructor(
     private authService: Auth,
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
-    private http: HttpClient
+    private http: HttpClient,
+    private reviewService: ReviewService
   ) {}
 
   ngOnInit() {
@@ -52,6 +57,9 @@ export class MyProfile implements OnInit {
           this.cdr.detectChanges();
         }
       });
+
+      this.loadReviewsForUser(this.userId);
+      
     } else {
       this.errorMessage = 'User not found. Please log in.';
       this.loading = false;
@@ -85,6 +93,20 @@ export class MyProfile implements OnInit {
       error: (err: any) => {
         console.error('Failed to upload avatar', err);
         alert('Error updating avatar');
+      }
+    });
+  }
+
+  loadReviewsForUser(targetUserId: number): void {
+    this.reviewService.getReviews().subscribe({
+      next: (data: any[]) => {
+        
+        this.userReviews = data.filter(r => r.user_receiver?.id === targetUserId);
+        console.log('Filtered reviews loaded successfully:', this.userReviews);
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error("Something went wrong while loading reviews", err);
       }
     });
   }
