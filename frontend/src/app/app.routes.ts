@@ -16,7 +16,7 @@ export const routes: Routes = [
     { path: 'applications', component: Applications },
     { path: 'my-team', component: Team },
     {path: 'register', component: Register},
-    {path: 'my-profile', component: MyProfile},
+    {path: 'my-profile/:id', component: MyProfile},
     { path: 'chat/:id', component: ChatComponent},
     {path: '**', redirectTo: '', pathMatch:"full"},
     
