@@ -72,6 +72,19 @@
       </div>
     </div>
 
+    <div class="reviews-section">
+    <h2>Reviews</h2>
+    @if (userReviews.length > 0) {
+            <div class="review-card" *ngFor="let review of userReviews">
+                <p><strong>From:</strong> @{{ review.user_sender?.username }}</p>
+                <p><strong>Rating:</strong> {{ review.rating }} / 5</p>
+                <p><strong>Comment:</strong> {{ review.comment }}</p>
+        </div>
+    } @else {
+        <p>No reviews yet.</p>
+    }
+    </div>
+
     <div class="trips-section">
       <h2 *ngIf="isMe">Trips I Organized</h2>
       <h2 *ngIf="!isMe">Trips He/She Organized</h2>

@@ -175,3 +175,19 @@
   color: #495057;
 }
 .error-box { color: #dc3545; font-weight: bold; }
+
+
+// Стили для раздела комментариев
+
+
+.review-card {
+  margin-bottom: 20px; 
+  padding: 15px;
+  background-color: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  
+  &:last-child {
+    margin-bottom: 0; 
+  }
+}
