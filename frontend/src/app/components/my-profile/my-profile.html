@@ -73,7 +73,9 @@
     </div>
 
     <div class="trips-section">
-      <h2>Trips I Organized</h2>
+      <h2 *ngIf="isMe">Trips I Organized</h2>
+      <h2 *ngIf="!isMe">Trips He/She Organized</h2>
+      
       
       @if (profileData.my_created_trips?.length > 0) {
         <div class="trips-list">
@@ -103,7 +105,9 @@
     </div>
 
     <div class="trips-section">
-      <h2>Trips I am Joining</h2>
+      <h2 *ngIf="isMe">Trips I am Joining</h2>
+      <h2 *ngIf="!isMe">Trips He/She is Joining</h2>
+
       
       @if (profileData.my_joined_trips?.length > 0) {
         <div class="trips-list">
@@ -127,7 +131,8 @@
           </div>
         </div>
       } @else {
-        <p class="empty-message">You haven't joined any trips as a passenger yet.</p>
+        <p *ngIf="isMe" class="empty-message">You haven't joined any trips as a passenger yet.</p>
+        <p *ngIf="!isMe" class="empty-message">He/She hasn't joined any trips as a passenger yet.</p>
       }
     </div>
 
