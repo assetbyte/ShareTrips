@@ -47,7 +47,7 @@ export class Applications implements OnInit {
     });
   }
 
-  onReject(appId: number) {
+  onReject(appId: number) : void {
     this.tripService.rejectApplication(appId).subscribe({
       next: () => {
         alert('Rejected');

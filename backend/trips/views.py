@@ -85,7 +85,7 @@ class TripApplicationViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         return TripApplication.objects.filter(
-            Q(applier=user) | Q(trip__creator=user)).distinct().order_by('-applied_at')
+            Q(applier=user) | Q(trip__creator=user)).distinct().order_by('applied_at')
     # заявки, где я пассажир (чекнуть свои заявки)
     # ИЛИ
     # заявки, присланные на мои поездки (одобрить или отклонить)
