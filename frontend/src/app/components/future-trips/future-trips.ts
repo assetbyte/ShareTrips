@@ -2,10 +2,11 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TripService } from '../../services/trip';
 import { ChangeDetectorRef } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-future-trips',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './future-trips.html',
   styleUrl: './future-trips.scss',
 })

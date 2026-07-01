@@ -1,16 +1,17 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core'; 
 import { CommonModule } from '@angular/common';
 import { Auth } from '../../services/auth';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ReviewService } from '../../services/review';
 import { Review } from '../../models/user.model';
+import { RouterLink } from '@angular/router';
 
 
 @Component({
   selector: 'app-my-profile',
   standalone: true, 
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './my-profile.html',
   styleUrl: './my-profile.scss',
 })

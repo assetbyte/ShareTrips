@@ -40,10 +40,11 @@
             DR
           </div>
           <div>
-            <p style="margin: 0; font-weight: 600; color: #111827;">@Driver (Trip Creator)</p>
+            <p style="margin: 0; font-weight: 600; color: #111827;"> <span style="color: #007bff; cursor: pointer; border-bottom: 1px dashed #007bff;" [routerLink]="['/my-profile', group.applications[0]?.trip?.creator.id]"> @Driver (Trip Creator)</span></p>
             <small style="color: #6b7280;">Main Driver of this route</small>
           </div>
         </div>
+
         <button 
           (click)="openReviewDialog(group.tripId, group.applications[0]?.trip?.creator)"
           style="background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; text-transform: uppercase;"
@@ -66,7 +67,7 @@
               {{ app.applier.username.substring(0, 2).toUpperCase() }}
             </div>
             <div>
-              <p style="margin: 0; font-weight: 600; color: #111827;">@{{ app.applier.username }}</p>
+              <p style="margin: 0; font-weight: 600; color: #111827;"> <span style="color: #007bff; cursor: pointer; border-bottom: 1px dashed #007bff;" [routerLink]="['/my-profile', app.applier.id]"> @{{ app.applier.username }}</span></p>
               <small style="color: #6b7280;">Applied: {{ app.applied_at | date:'dd.MM.yyyy HH:mm' }}</small>
             </div>
           </div>

@@ -2,11 +2,11 @@ import { Component, Input, OnInit } from '@angular/core';
 import { TripService } from '../../services/trip';
 import { ChangeDetectorRef } from '@angular/core';
 import { DatePipe, CommonModule } from '@angular/common';
-
+import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-applications',
   standalone: true,
-  imports: [CommonModule, DatePipe], 
+  imports: [CommonModule, DatePipe, RouterLink], 
   templateUrl: './applications.html',
   styleUrl: './applications.scss',
 })

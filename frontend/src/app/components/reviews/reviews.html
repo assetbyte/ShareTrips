@@ -4,8 +4,8 @@
   <p *ngIf="reviews.length === 0" style="color: gray;">No reviews written yet.</p>
 
   <div *ngFor="let review of reviews" style="border: 1px solid #e5e7eb; padding: 15px; margin-bottom: 12px; border-radius: 8px; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-    <p><strong>From:</strong> @{{ review.user_sender.username }}</p>
-    <p><strong>To:</strong> @{{ review.user_receiver.username }}</p>
+    <p ><strong>From:</strong> <span style="color: #007bff; cursor: pointer; border-bottom: 1px dashed #007bff;" [routerLink]="['/my-profile', review.user_sender.id]"> @{{ review.user_sender.username }}</span></p>
+    <p ><strong>To:</strong> <span style="color: #007bff; cursor: pointer; border-bottom: 1px dashed #007bff;" [routerLink]="['/my-profile', review.user_receiver.id]"> @{{ review.user_receiver.username }}</span></p>
     <p><strong>Rating:</strong> {{ '★'.repeat(review.rating) }}{{ '☆'.repeat(5 - review.rating) }} ({{ review.rating }}/5)</p>
     <p style="margin-top: 8px; color: #4b5563;"><strong>Comment:</strong> {{ review.comment }}</p>
     <div style="margin-top: 10px; text-align: right;">
@@ -13,3 +13,4 @@
     </div>
   </div>
 </div>
+

@@ -76,7 +76,7 @@
     <h2>Reviews</h2>
     @if (userReviews.length > 0) {
             <div class="review-card" *ngFor="let review of userReviews">
-                <p><strong>From:</strong> @{{ review.user_sender?.username }}</p>
+                <p><strong>From <span style="color: #007bff; cursor: pointer; border-bottom: 1px dashed #007bff;" [routerLink]="['/my-profile', review.user_sender?.id]"> @{{ review.user_sender?.username }}</span></strong></p>
                 <p><strong>Rating:</strong> {{ review.rating }} / 5</p>
                 <p><strong>Comment:</strong> {{ review.comment }}</p>
         </div>
@@ -137,7 +137,7 @@
             </div>
             
             <div class="trip-body">
-              <p><strong>Driver:</strong> &#64;{{ trip.creator?.username }}</p>
+              <p><strong>Driver:</strong> &#64; <span style="color: #007bff; cursor: pointer; border-bottom: 1px dashed #007bff;" [routerLink]="['/my-profile', trip.creator?.id]"> {{ trip.creator?.username }}</span></p>
               <p><strong>Departure Date:</strong> {{ trip.departure_date | date:'dd.MM.yyyy' }}</p>
               <p><strong>Price:</strong> {{ trip.total_cost }} KZT</p>
             </div>

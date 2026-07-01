@@ -13,7 +13,7 @@
         
         <span [ngStyle]="{
           'background-color': app.status === 'success' || app.status === 'accepted' ? '#28a745' : 
-                              app.status === 'rejected' ? '#dc3545' : '#ffc107',
+                              app.status === 'rejected' || app.status === 'kicked' ? '#dc3545' : '#ffc107',
           'color': app.status === 'pending' ? '#000' : '#fff'
         }" style="padding: 5px 10px; border-radius: 4px; font-size: 12px; position: absolute; top: 15px; right: 15px; text-transform: uppercase; font-weight: bold;">
           Your Application status: {{ app.status }}
@@ -42,7 +42,7 @@
           <hr style="border: 0; border-top: 1px solid #f3f4f6; margin: 10px 0;">
 
           <p style="margin: 5px 0;"><strong>Departure date:</strong> {{ app.trip.departure_date | date:'dd.MM.yyyy' }}</p>
-          <p style="margin: 5px 0;"><strong>Publisher:</strong> @{{ app.trip.creator.username }}</p>
+          <p style="margin: 5px 0;"><strong>Publisher:</strong> <span style="color: #007bff; cursor: pointer; border-bottom: 1px dashed #007bff;" [routerLink]="['/my-profile', app.trip.creator.id]"> @{{ app.trip.creator.username }}</span></p>
           <p style="margin: 5px 0;"><strong>Cost:</strong> {{ app.trip.total_cost }} KZT</p>
           
           <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid #fafafa;">

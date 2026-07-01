@@ -4,10 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { ReviewService } from '../../services/review';
 import { Auth } from '../../services/auth';
 import { Review, ReviewCreateData } from '../../models/user.model';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-reviews',
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, RouterLink],
   templateUrl: './reviews.html',
   styleUrl: './reviews.scss',
 })
