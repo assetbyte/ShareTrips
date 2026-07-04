@@ -32,10 +32,12 @@ export class MyProfile implements OnInit {
   ) {}
 
   ngOnInit() {
-    const paramId = this.route.snapshot.paramMap.get('id'); 
-    const currentUserId = this.authService.getCurrentUserId();
 
-    if (paramId) {
+    this.route.paramMap.subscribe(params => {
+      this.loading = true; 
+      const paramId = params.get('id'); 
+      const currentUserId = this.authService.getCurrentUserId();
+      if (paramId) {
       this.userId =+paramId; 
       this.isMe = (this.userId === currentUserId);
     } else {
@@ -66,6 +68,9 @@ export class MyProfile implements OnInit {
       this.loading = false;
       this.cdr.detectChanges();
     }
+    })
+
+    
   }
 
   onAvatarChange(event: any): void {
