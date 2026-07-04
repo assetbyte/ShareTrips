@@ -10,7 +10,7 @@ from rest_framework.decorators import action
 from django.db.models import Q  #сложные фильтры 
 import time
 from django.core.exceptions import PermissionDenied, ValidationError
-
+stripe.api_key = settings.STRIPE_SECRET_KEY
 from .models import Trip, TripApplication
 from .serializers import (
     TripApplicationCreateSeriazlier, 
@@ -110,16 +110,43 @@ class TripApplicationViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
             
+        application.status = 'accepted'
+        application.save()
+        
+        #если место последнее то меняем статус
+        if accepted_cnt + 1 == application.trip.total_seats:
+            application.trip.status = 'closed'
+            application.trip.save()
+        return Response({"status": "application accepted"}, status=status.HTTP_200_OK)
+    
+    @action(detail=True, methods=['post'], url_path='payment')
+    def pay_application(self, request, pk=None):
+        application = self.get_object()
+        
+        if application.applier != request.user:
+            return Response(
+                {"detail": "You are not the applier of this trip!"}, 
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        if application.status != 'accepted':
+            return Response(
+                {"detail": "You can only pay for accepted applications!"}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            seats = application.trip.total_seats if application.trip.total_seats > 0 else 1
+            stripe_amount = int((application.trip.total_cost * 100) / seats)
             
-        try: 
-            stripe_amount = int((application.trip.total_cost * 100) / application.trip.total_seats)  #cents
             checkout_session = stripe.checkout.Session.create(
                 payment_method_types=['card'],
-                line_items = [{
+                line_items=[{
                     'price_data': {
                         'currency': "kzt",
                         'product_data': {
-                            'name': f'Trip from {application.trip.departure_from} to {application.trip.departure_to} on {application.trip.departure_date}',
+                            'name': f'Trip from {application.trip.departure_from} to {application.trip.departure_to}',
+                            'description': f'Departure date: {application.trip.departure_date}',
                         },
                         'unit_amount': stripe_amount
                     },
@@ -134,23 +161,10 @@ class TripApplicationViewSet(viewsets.ModelViewSet):
                     'applier_id': application.applier.id
                 }
             )
+            return Response({"stripe_url": checkout_session.url}, status=status.HTTP_200_OK)
             
         except Exception as e:
-            return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            
-            
-
-        application.status = 'accepted'
-        application.save()
-        
-        #если место последнее то меняем статус
-        if accepted_cnt + 1 == application.trip.total_seats:
-            application.trip.status = 'closed'
-            application.trip.save()
-        return Response({
-            "status": "application accepted",
-            "stripe_url": checkout_session.url
-        }, status=status.HTTP_200_OK)
+            return Response({"detail": f"Stripe error: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     @action(detail=True, methods=['post'], url_path='reject')
     def reject_application(self, request, pk=None):
