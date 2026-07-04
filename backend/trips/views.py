@@ -1,5 +1,7 @@
 from datetime import date
-
+import stripe
+from django.conf import settings
+from django.http import JsonResponse
 from django.shortcuts import render
 from rest_framework import viewsets, status
 from rest_framework.response import Response
@@ -108,6 +110,36 @@ class TripApplicationViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
             
+            
+        try: 
+            stripe_amount = int((application.trip.total_cost * 100) / application.trip.total_seats)  #cents
+            checkout_session = stripe.checkout.Session.create(
+                payment_method_types=['card'],
+                line_items = [{
+                    'price_data': {
+                        'currency': "kzt",
+                        'product_data': {
+                            'name': f'Trip from {application.trip.departure_from} to {application.trip.departure_to} on {application.trip.departure_date}',
+                        },
+                        'unit_amount': stripe_amount
+                    },
+                    'quantity': 1,
+                }],
+                mode='payment',
+                success_url=f'http://localhost:4200/payment/success?session_id={{CHECKOUT_SESSION_ID}}&app_id={application.id}',
+                cancel_url='http://localhost:4200/payment/cancel',
+                metadata={
+                    'application_id': application.id,
+                    'trip_id': application.trip.id,
+                    'applier_id': application.applier.id
+                }
+            )
+            
+        except Exception as e:
+            return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
+            
+
         application.status = 'accepted'
         application.save()
         
@@ -115,7 +147,10 @@ class TripApplicationViewSet(viewsets.ModelViewSet):
         if accepted_cnt + 1 == application.trip.total_seats:
             application.trip.status = 'closed'
             application.trip.save()
-        return Response({"status": "application accepted"}, status=status.HTTP_200_OK)
+        return Response({
+            "status": "application accepted",
+            "stripe_url": checkout_session.url
+        }, status=status.HTTP_200_OK)
     
     @action(detail=True, methods=['post'], url_path='reject')
     def reject_application(self, request, pk=None):

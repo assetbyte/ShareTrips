@@ -17,3 +17,5 @@ staticfiles/
 # Настройки IDE
 .idea/
 .vscode/
+
+.env
