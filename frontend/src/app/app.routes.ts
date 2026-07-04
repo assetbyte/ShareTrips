@@ -8,6 +8,8 @@ import { Team } from './components/team/team';
 import { Register } from './components/register/register';
 import { MyProfile } from './components/my-profile/my-profile';
 import { ChatComponent } from './components/chat/chat';
+import { PaymentSuccess } from './components/payment-success/payment-success';
+import { PaymentCancel } from './components/payment-cancel/payment-cancel';
 export const routes: Routes = [
     {path: '', component: Home},
     {path: 'login', component: Login},
@@ -19,5 +21,7 @@ export const routes: Routes = [
     {path: 'my-profile/:id', component: MyProfile},
     { path: 'chat/:id', component: ChatComponent},
     {path: '**', redirectTo: '', pathMatch:"full"},
+    {path: 'payment-success', component: PaymentSuccess},
+    {path: 'payment-cancel', component: PaymentCancel}
     
 ];

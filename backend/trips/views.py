@@ -137,7 +137,7 @@ class TripApplicationViewSet(viewsets.ModelViewSet):
         
         try:
             seats = application.trip.total_seats if application.trip.total_seats > 0 else 1
-            stripe_amount = int((application.trip.total_cost * 100) / seats)
+            stripe_amount = int((application.trip.total_cost * 100) / seats) #drivers are not paying
             
             checkout_session = stripe.checkout.Session.create(
                 payment_method_types=['card'],

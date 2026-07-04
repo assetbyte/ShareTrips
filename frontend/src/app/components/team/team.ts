@@ -6,6 +6,7 @@ import { RouterLink } from '@angular/router';
 import { ReviewService } from '../../services/review';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ReviewDialog } from '../review-dialog/review-dialog';
+import { HttpClient } from '@angular/common/http';
 
 export interface GroupedTrip {
   tripId: number;
@@ -35,7 +36,8 @@ export class Team implements OnInit {
     private authService: Auth, 
     private reviewService: ReviewService,
     private dialog: MatDialog,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private http: HttpClient,
   ) {}
 
   ngOnInit(): void {
@@ -78,9 +80,38 @@ export class Team implements OnInit {
     this.groupedTrips = Object.values(groups);
   }
 
-  onSimulatedPay(group: GroupedTrip): void {
-    alert(`Freedom Pay test! \nRoute: ${group.departure_from} ➔ ${group.departure_to}\nTo pay: ${group.cost_per_person} ₸`);
-  }
+   onSimulatedPay(group: GroupedTrip): void {
+    const myApplication = group.applications.find(
+      app => app.applier.id === this.currentUserId
+    );
+
+    if (!myApplication) {
+      alert('Drivers are not paying!');
+      return;
+    }
+
+  const token = this.authService.getToken(); 
+
+  const headers = {
+    'Authorization': `Token ${token}` 
+  };
+
+  this.http.post<{ stripe_url: string }>(
+    `http://localhost:8000/api/applications/${myApplication.id}/payment/`, 
+    {},
+    { headers } 
+  ).subscribe({
+    next: (response) => {
+      if (response && response.stripe_url) {
+        window.location.href = response.stripe_url;
+      }
+    },
+    error: (err: any) => {
+      console.error(err);
+      alert(err.error?.detail || 'Unauthorized or error occurred.');
+    }
+  });
+}
 
   openReviewDialog(tripId: number, receiver: any): void {
     const dialogRef = this.dialog.open(ReviewDialog, {
