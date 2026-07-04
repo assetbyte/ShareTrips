@@ -36,6 +36,7 @@ export class MyProfile implements OnInit {
     this.route.paramMap.subscribe(params => {
       this.loading = true; 
       const paramId = params.get('id'); 
+      
       const currentUserId = this.authService.getCurrentUserId();
       if (paramId) {
       this.userId =+paramId; 
