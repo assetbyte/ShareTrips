@@ -39,3 +39,10 @@ class TripApplication(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending') # pending, accepted, rejected
     applied_at = models.DateTimeField(auto_now_add=True)
     application_message = models.TextField()
+    
+    #поля оплаты 
+    is_paid = models.BooleanField(default=False)
+    stripe_session_id = models.CharField(max_length=255, blank=True, null=True, unique=True)
+    
+    def __str__(self):
+        return f"Application by {self.applier.username} for trip from {self.trip.departure_from} to {self.trip.departure_to} is {self.is_paid and 'paid' or 'not paid'}" 
