@@ -134,6 +134,12 @@ class TripApplicationViewSet(viewsets.ModelViewSet):
                 {"detail": "You can only pay for accepted applications!"}, 
                 status=status.HTTP_400_BAD_REQUEST
             )
+            
+        if application.is_paid:
+            return Response(
+                {"detail": "This application has already been paid by you!"}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
         
         try:
             seats = application.trip.total_seats if application.trip.total_seats > 0 else 1
@@ -161,6 +167,9 @@ class TripApplicationViewSet(viewsets.ModelViewSet):
                     'applier_id': application.applier.id
                 }
             )
+            
+            application.stripe_session_id = checkout_session.id
+            application.save()
             return Response({"stripe_url": checkout_session.url}, status=status.HTTP_200_OK)
             
         

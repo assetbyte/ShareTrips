@@ -90,7 +90,7 @@ class TripApplicationSerializer(serializers.ModelSerializer):
     trip = TripSerializer(read_only = True)
     class Meta:
         model = TripApplication
-        fields = ['id', 'trip', 'applier', 'status', 'applied_at', 'application_message']
+        fields = ['id', 'trip', 'applier', 'status', 'applied_at', 'application_message', 'is_paid', 'stripe_session_id']
         
 #post подать заявки на поездку
 class TripApplicationCreateSeriazlier(serializers.ModelSerializer):
