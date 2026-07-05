@@ -20,8 +20,8 @@ export const routes: Routes = [
     {path: 'register', component: Register},
     {path: 'my-profile/:id', component: MyProfile},
     { path: 'chat/:id', component: ChatComponent},
-    {path: '**', redirectTo: '', pathMatch:"full"},
-    {path: 'payment-success', component: PaymentSuccess},
-    {path: 'payment-cancel', component: PaymentCancel}
-    
+     {path: 'payment/success', component: PaymentSuccess},
+    {path: 'payment-cancel', component: PaymentCancel},
+    {path: '**', redirectTo: '', pathMatch:"full"},                 
+   
 ];

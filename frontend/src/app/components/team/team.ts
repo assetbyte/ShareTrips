@@ -86,7 +86,7 @@ export class Team implements OnInit {
     );
 
     if (!myApplication) {
-      alert('Drivers are not paying!');
+      alert('Drivers are not paying! Only passengers need to pay. You are the driver of this trip.');
       return;
     }
 
