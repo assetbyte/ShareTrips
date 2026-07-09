@@ -1,7 +1,9 @@
 from datetime import date
+import json
+
 import stripe
 from django.conf import settings
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from rest_framework import viewsets, status
 from rest_framework.response import Response
@@ -18,6 +20,52 @@ from .serializers import (
     TripCreateSerializer, 
     TripSerializer
 )
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
+def stripe_webhook(request):
+    payload = request.body
+    sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
+    event = None
+
+    endpoint_secret = getattr(settings, 'STRIPE_WEBHOOK_SECRET', None)
+
+    try:
+        if endpoint_secret:
+            event = stripe.Webhook.construct_event(
+                payload, sig_header, endpoint_secret
+            )
+        else:
+
+            event = stripe.Event.construct_from(
+                json.loads(payload), stripe.api_key
+            )
+    except ValueError as e:
+        return HttpResponse(status=400)
+    except stripe.error.SignatureVerificationError as e:
+        return HttpResponse(status=400)
+
+    if event['type'] == 'checkout.session.completed':
+        session = event['data']['object']
+        
+        
+        session_id = session.id
+        
+        try:
+            application = TripApplication.objects.get(stripe_session_id=session_id)
+            
+            if not application.is_paid:
+                application.is_paid = True
+                application.save()
+                print(f" Stripe Webhook Application {application.id} successfully marked as paid.")
+                
+        except TripApplication.DoesNotExist:
+            print(f" Stripe Webhook Application with session {session_id} not found.")
+            
+    return HttpResponse(status=200)
+    
+    
+
 
 class TripViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
