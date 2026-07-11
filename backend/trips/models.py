@@ -32,6 +32,7 @@ class TripApplication(models.Model):
         ('accepted', 'Accepted'),
         ('rejected', 'Rejected'),
         ('kicked', 'Kicked'), 
+        ('waiting_payment', 'Waiting for payment')
     ]
     
     trip = models.ForeignKey(Trip, on_delete=models.CASCADE, related_name='applications') # одна поездка может иметь несколько заявок
