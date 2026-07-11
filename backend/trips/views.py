@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timezone
 import json
 
 import stripe
@@ -55,6 +55,7 @@ def stripe_webhook(request):
             
             if not application.is_paid:
                 application.is_paid = True
+                application.status = "accepted"
                 application.save()
                 print(f" Stripe Webhook Application {application.id} successfully marked as paid.")
                 
@@ -132,9 +133,24 @@ class TripApplicationViewSet(viewsets.ModelViewSet):
         instance.delete()
             
     def get_queryset(self):
+        expired_apps = TripApplication.objects.filter(
+            status='waiting_payment',
+            payment_deadline__lt=timezone.now()
+        )
+        
+        if expired_apps.exists():
+            for app in expired_apps:
+                trip = app.trip
+                app.status = 'rejected'
+                app.save()
+                if not trip.is_available:
+                    trip.is_available = True #после кика можно снова открыть поездку
+                    trip.save()
+
         user = self.request.user
         return TripApplication.objects.filter(
-            Q(applier=user) | Q(trip__creator=user)).distinct().order_by('applied_at')
+            Q(applier=user) | Q(trip__creator=user)
+        ).distinct().order_by('applied_at')
     # заявки, где я пассажир (чекнуть свои заявки)
     # ИЛИ
     # заявки, присланные на мои поездки (одобрить или отклонить)
@@ -171,7 +187,7 @@ class TripApplicationViewSet(viewsets.ModelViewSet):
         application.save()
         
         if occupied_seats + 1 == application.trip.total_seats:
-            application.trip.status = 'closed'
+            application.trip.is_available = False
             application.trip.save()
             
         return Response({"status": "application accepted, waiting for payment"}, status=status.HTTP_200_OK)
