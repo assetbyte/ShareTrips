@@ -21,7 +21,7 @@ export const routes: Routes = [
     {path: 'my-profile/:id', component: MyProfile},
     { path: 'chat/:id', component: ChatComponent},
      {path: 'payment/success', component: PaymentSuccess},
-    {path: 'payment-cancel', component: PaymentCancel},
+    {path: 'payment/cancel', component: PaymentCancel},
     {path: '**', redirectTo: '', pathMatch:"full"},                 
    
 ];

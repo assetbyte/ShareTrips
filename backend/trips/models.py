@@ -44,5 +44,8 @@ class TripApplication(models.Model):
     is_paid = models.BooleanField(default=False)
     stripe_session_id = models.CharField(max_length=255, blank=True, null=True, unique=True)
     
+    
+    payment_deadline = models.DateTimeField(null=True, blank=True)
+    
     def __str__(self):
         return f"Application by {self.applier.username} for trip from {self.trip.departure_from} to {self.trip.departure_to} is {self.is_paid and 'paid' or 'not paid'}" 

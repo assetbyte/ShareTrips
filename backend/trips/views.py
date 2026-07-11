@@ -36,7 +36,6 @@ def stripe_webhook(request):
                 payload, sig_header, endpoint_secret
             )
         else:
-
             event = stripe.Event.construct_from(
                 json.loads(payload), stripe.api_key
             )
@@ -48,7 +47,7 @@ def stripe_webhook(request):
     if event['type'] == 'checkout.session.completed':
         session = event['data']['object']
         
-        
+
         session_id = session.id
         
         try:

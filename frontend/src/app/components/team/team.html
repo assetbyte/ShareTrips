@@ -150,7 +150,7 @@
 
         <div style="display: flex; justify-content: flex-end;">
           <button 
-            *ngIf="group.status !== 'Trip has ended'"
+            *ngIf="group.status !== 'Trip has ended' && group.applications.find(app => app.applier.id === currentUserId && !app.is_paid)"
             (click)="onSimulatedPay(group)"
             style="background: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.2s; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 2px 4px rgba(37, 99, 235, 0.1);"
             onmouseover="this.style.background='#1d4ed8'"
@@ -161,7 +161,7 @@
 
           <span 
             *ngIf="group.applications.find(app => app.applier.id === currentUserId && app.is_paid)"
-            style="background: #dcfce7; color: #15803d; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+            style="background: #dcfce7; color: #15803d; padding: 10px 30px; border-radius: 8px; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
             Paid
           </span>
         </div>
