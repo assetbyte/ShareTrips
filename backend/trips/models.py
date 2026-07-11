@@ -12,6 +12,8 @@ class Trip(models.Model):
     total_cost = models.DecimalField(max_digits=10, decimal_places=2)
     total_seats = models.PositiveIntegerField(default=4)
     
+    is_available = models.BooleanField(default=True)   #доступность поездки
+    
     @property
     def status(self):
         today = date.today() # curr date
