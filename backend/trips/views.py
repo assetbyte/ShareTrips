@@ -147,24 +147,35 @@ class TripApplicationViewSet(viewsets.ModelViewSet):
                 {"detail": "You are not the creator of this trip!"}, 
                 status=status.HTTP_403_FORBIDDEN
             )
-        #сколько пассажиров уже одобрено
-        accepted_cnt = TripApplication.objects.filter(trip=application.trip, 
-                                                      status="accepted").count()
+            
+        if application.status != 'pending':
+            return Response(
+                {"detail": "You can only accept pending applications!"}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        occupied_seats = TripApplication.objects.filter(
+            trip=application.trip, 
+            status__in=["accepted", "waiting_payment"]
+        ).count()
         
-        if accepted_cnt >= application.trip.total_seats:
+        if occupied_seats >= application.trip.total_seats:
             return Response(
                 {"detail": "No available seats left in this car!"}, 
                 status=status.HTTP_400_BAD_REQUEST
             )
             
-        application.status = 'accepted'
+        # Включаем таймер на 1 час
+        application.status = 'waiting_payment'
+        application.payment_deadline = timezone.now() + timedelta(hours=1)
         application.save()
         
-        #если место последнее то меняем статус
-        if accepted_cnt + 1 == application.trip.total_seats:
+        if occupied_seats + 1 == application.trip.total_seats:
             application.trip.status = 'closed'
             application.trip.save()
-        return Response({"status": "application accepted"}, status=status.HTTP_200_OK)
+            
+        return Response({"status": "application accepted, waiting for payment"}, status=status.HTTP_200_OK)
+        
     
     @action(detail=True, methods=['post'], url_path='payment')
     def pay_application(self, request, pk=None):
