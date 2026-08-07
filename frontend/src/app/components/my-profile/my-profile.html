@@ -10,13 +10,13 @@
 } @else if (profileData) {
   <div class="profile-container">
     
+    
     <div class="profile-card">
-      <div class="avatar-container" style="position: relative; display: inline-block; margin-bottom: 15px;">
+      <div class="avatar-container">
         <img 
-        [src]="profileData.profile?.avatar ? profileData.profile.avatar : 'default-avatar.png'"
-        alt="User Avatar" 
-        class="profile-avatar"
-        style="width: 100px; height: 100px; border-radius: 50%; object-fit: contain; border: 4px solid #0056b3;"
+          [src]="profileData.profile?.avatar ? profileData.profile.avatar : 'default-avatar.png'"
+          alt="User Avatar" 
+          class="profile-avatar"
         >
     
         <input 
@@ -24,38 +24,24 @@
           #avatarChangeInput 
           (change)="onAvatarChange($event)" 
           accept="image/*" 
-          style="display: none;"
+          class="hidden-input"
         >
-        
         
         <div *ngIf="isMe"
-            (click)="avatarChangeInput.click()" 
-            style="
-                position: absolute; 
-                bottom: 5px; 
-                right: 5px; 
-                background: rgb(215, 214, 214); 
-                border-radius: 50%; 
-                width: 32px; 
-                height: 32px; 
-                display: flex;        
-                align-items: center;    
-                justify-content: center;
-                cursor: pointer; 
-                box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            "
-            title="Change profile picture"
+             (click)="avatarChangeInput.click()" 
+             class="avatar-change-btn"
+             title="Change profile picture"
         >
-        <img 
+          <img 
             src="profile_photo_change.png" 
             alt="Camera" 
-            style="width: 18px; height: 18px; display: block; object-fit: contain; "
-        >
+            class="camera-icon"
+          >
         </div>
       </div>
       
       <h2 class="user-fullname">{{ profileData.profile?.name }} {{ profileData.profile?.last_name }}</h2>
-      <p class="user-username">{{ profileData.profile?.user?.username }}</p>
+      <p class="user-username">&#64;{{ profileData.profile?.user?.username }}</p>
       
       <div class="rating-badge">
         <span class="star">★</span> {{ profileData.profile?.average_rating }} / 5.0
@@ -72,23 +58,26 @@
       </div>
     </div>
 
-    <div class="reviews-section">
-    <h2>Reviews</h2>
-    @if (userReviews.length > 0) {
-            <div class="review-card" *ngFor="let review of userReviews">
-                <p><strong>From <span style="color: #007bff; cursor: pointer; border-bottom: 1px dashed #007bff;" [routerLink]="['/my-profile', review.user_sender?.id]"> @{{ review.user_sender?.username }}</span></strong></p>
-                <p><strong>Rating:</strong> {{ review.rating }} / 5</p>
-                <p><strong>Comment:</strong> {{ review.comment }}</p>
+
+    <div class="trips-section reviews-section">
+      <h2>Reviews</h2>
+      @if (userReviews.length > 0) {
+        <div class="reviews-list">
+          <div class="review-card" *ngFor="let review of userReviews">
+            <p><strong>From <span class="user-link" [routerLink]="['/my-profile', review.user_sender?.id]">&#64;{{ review.user_sender?.username }}</span></strong></p>
+            <p><strong>Rating:</strong> {{ review.rating }} / 5</p>
+            <p><strong>Comment:</strong> {{ review.comment }}</p>
+          </div>
         </div>
-    } @else {
-        <p>No reviews yet.</p>
-    }
+      } @else {
+        <p class="empty-message">No reviews yet.</p>
+      }
     </div>
+
 
     <div class="trips-section">
       <h2 *ngIf="isMe">Trips I Organized</h2>
       <h2 *ngIf="!isMe">Trips He/She Organized</h2>
-      
       
       @if (profileData.my_created_trips?.length > 0) {
         <div class="trips-list">
@@ -117,11 +106,11 @@
       }
     </div>
 
+
     <div class="trips-section">
       <h2 *ngIf="isMe">Trips with Me</h2>
       <h2 *ngIf="!isMe">Trips with Him/Her</h2>
 
-      
       @if (profileData.my_joined_trips?.length > 0) {
         <div class="trips-list">
           <div class="trip-card" *ngFor="let trip of profileData.my_joined_trips">
@@ -137,7 +126,7 @@
             </div>
             
             <div class="trip-body">
-              <p><strong>Driver:</strong> &#64; <span style="color: #007bff; cursor: pointer; border-bottom: 1px dashed #007bff;" [routerLink]="['/my-profile', trip.creator?.id]"> {{ trip.creator?.username }}</span></p>
+              <p><strong>Driver:</strong> <span class="user-link" [routerLink]="['/my-profile', trip.creator?.id]">&#64;{{ trip.creator?.username }}</span></p>
               <p><strong>Departure Date:</strong> {{ trip.departure_date | date:'dd.MM.yyyy' }}</p>
               <p><strong>Price:</strong> {{ trip.total_cost }} KZT</p>
             </div>

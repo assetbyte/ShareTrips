@@ -9,12 +9,17 @@ import { min } from 'rxjs';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ApplyMessage } from '../apply-message/apply-message';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatInputModule} from '@angular/material/input';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {provideNativeDateAdapter} from '@angular/material/core';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, MatSliderModule, MatDialogModule],
+  imports: [CommonModule, FormsModule, RouterLink, MatSliderModule, MatDialogModule, MatDatepickerModule, MatInputModule, MatFormFieldModule],
   templateUrl: './home.html',
+  providers: [provideNativeDateAdapter()],
   styleUrl: './home.scss',
 })
 export class Home implements OnInit {

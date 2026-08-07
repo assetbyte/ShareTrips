@@ -21,7 +21,7 @@ from .serializers import (
     TripSerializer
 )
 from django.views.decorators.csrf import csrf_exempt
-
+from django.utils import timezone
 @csrf_exempt
 def stripe_webhook(request):
     payload = request.body

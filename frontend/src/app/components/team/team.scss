@@ -1,0 +1,414 @@
+.teams-container {
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 0 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  box-sizing: border-box;
+
+  .page-title {
+    color: #1f2937;
+    margin-bottom: 24px;
+    font-weight: 700;
+    font-size: 1.5rem; 
+    border-bottom: 2px solid #e5e7eb;
+    padding-bottom: 12px;
+  }
+
+  .empty-state {
+    color: #6b7280;
+    text-align: center;
+    margin: 40px 0;
+    font-size: 0.9375rem;
+  }
+
+  .trip-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+
+    .card-header {
+      background: #f8fafc;
+      padding: 16px 20px;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+
+      .route-title {
+        margin: 0;
+        color: #1e40af;
+        font-size: 1.125rem;
+        font-weight: 700;
+
+        .arrow {
+          color: #9ca3af;
+          font-weight: normal;
+          margin: 0 4px;
+        }
+      }
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .status-badge {
+          background: #dbeafe;
+          color: #1e40af;
+          padding: 6px 14px;
+          border-radius: 9999px;
+          font-size: 0.8125rem; 
+          font-weight: 600;
+
+          &.status-finished {
+            background: #fee2e2;
+            color: #991b1b;
+          }
+        }
+
+        .btn-chat {
+          background: #16a34a;
+          color: #ffffff;
+          border: none;
+          padding: 6px 14px;
+          border-radius: 9999px;
+          font-size: 0.8125rem;
+          font-weight: 600;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          transition: background-color 0.2s;
+
+          &:hover {
+            background: #15803d;
+          }
+        }
+      }
+    }
+
+    .card-body {
+      padding: 20px;
+
+      .driver-card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 16px;
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        border-radius: 8px;
+        margin-bottom: 16px;
+      }
+
+      .section-label {
+        margin: 0 0 12px 0;
+        color: #4b5563;
+        font-size: 0.875rem; 
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .teammates-grid {
+        display: grid;
+        gap: 12px;
+
+        .teammate-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 12px 16px;
+          background: #f9fafb;
+          border: 1px solid #f3f4f6;
+          border-radius: 8px;
+        }
+      }
+
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .avatar {
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 700;
+          font-size: 0.875rem;
+
+          &.avatar-driver {
+            background: #3b82f6;
+            color: #ffffff;
+          }
+
+          &.avatar-passenger {
+            background: #e0f2fe;
+            color: #0369a1;
+          }
+        }
+
+        .user-details {
+          .user-name {
+            margin: 0;
+            font-weight: 600;
+            color: #111827;
+
+            .user-link {
+              color: #2563eb;
+              cursor: pointer;
+              border-bottom: 1px dashed #2563eb;
+
+              &:hover {
+                border-bottom-style: solid;
+              }
+            }
+          }
+
+          .user-role,
+          .applied-date {
+            color: #6b7280;
+            font-size: 0.75rem;
+          }
+        }
+      }
+
+
+      .actions-group {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .badge {
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+
+        &.badge-confirmed {
+          background: #dcfce7;
+          color: #15803d;
+        }
+
+        &.badge-self {
+          background: #f3f4f6;
+          color: #6b7280;
+        }
+      }
+
+
+      .btn-action {
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-transform: uppercase;
+        padding: 4px 10px;
+
+        &.btn-rate,
+        &.btn-rate-teammate {
+          padding: 6px 12px;
+          background: #e0f2fe;
+          color: #0369a1;
+          border: 1px solid #bae6fd;
+
+          &:hover {
+            background: #0369a1;
+            color: #ffffff;
+          }
+        }
+
+        &.btn-rate-teammate {
+          background: #dcfce7;
+          color: #15803d;
+          border-color: #bbf7d0;
+
+          &:hover {
+            background: #15803d;
+            color: #ffffff;
+          }
+        }
+
+        &.btn-kick {
+          background: #fee2e2;
+          color: #dc2626;
+          border: 1px solid #fecaca;
+
+          &:hover {
+            background: #dc2626;
+            color: #ffffff;
+          }
+        }
+
+        &.btn-leave {
+          background: #f1f5f9;
+          color: #475569;
+          border: 1px solid #cbd5e1;
+
+          &:hover {
+            background: #94a3b8;
+            color: #ffffff;
+          }
+        }
+      }
+
+
+      .financial-card {
+        margin-top: 24px;
+        padding: 20px;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+        .financial-title {
+          margin: 0 0 16px 0;
+          color: #1f2937;
+          font-size: 1rem;
+          font-weight: 700;
+          letter-spacing: -0.3px;
+        }
+
+        .financial-stats {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+          gap: 16px;
+          margin-bottom: 20px;
+
+          .stat-box {
+            background: #f9fafb;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #f3f4f6;
+
+            .stat-label {
+              display: block;
+              font-size: 0.6875rem; 
+              color: #6b7280;
+              font-weight: 600;
+              text-transform: uppercase;
+              margin-bottom: 4px;
+            }
+
+            .stat-value {
+              font-size: 1rem;
+              color: #111827;
+            }
+
+            &.stat-highlight {
+              background: #eff6ff;
+              border-color: #dbeafe;
+
+              .stat-label {
+                color: #2563eb;
+                font-weight: 700;
+              }
+
+              .stat-value {
+                font-size: 1.125rem;
+                color: #1d4ed8;
+                font-weight: 800;
+              }
+            }
+          }
+        }
+
+        .financial-actions {
+          display: flex;
+          justify-content: flex-end;
+
+          .btn-pay {
+            background: #2563eb;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 4px rgba(37, 99, 235, 0.1);
+
+            &:hover {
+              background: #1d4ed8;
+            }
+          }
+
+          .badge-paid {
+            background: #dcfce7;
+            color: #15803d;
+            padding: 10px 30px;
+            border-radius: 8px;
+            font-size: 0.8125rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+          }
+        }
+      }
+    }
+  }
+}
+
+
+@media (max-width: 640px) {
+  .teams-container {
+    padding: 0 10px;
+
+    .trip-card {
+      .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+
+        .header-actions {
+          width: 100%;
+          justify-content: space-between;
+        }
+      }
+
+      .card-body {
+        padding: 12px;
+
+        .driver-card,
+        .teammate-row {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 12px;
+
+          .actions-group {
+            width: 100%;
+            justify-content: flex-end;
+          }
+        }
+
+        .financial-card {
+          padding: 12px;
+
+          .financial-actions {
+            .btn-pay,
+            .badge-paid {
+              width: 100%;
+              justify-content: center;
+            }
+          }
+        }
+      }
+    }
+  }
+}
