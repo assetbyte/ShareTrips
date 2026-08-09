@@ -116,7 +116,9 @@
 
 
       <div class="financial-card">
-        <h4 class="financial-title">
+
+      
+        <h4  class="financial-title">
           Financial Split
         </h4>
 
@@ -128,10 +130,10 @@
 
           <div class="stat-box">
             <span class="stat-label">People Paid</span>
-            <strong class="stat-value">{{ group.accepted_cnt }} / {{ group.total_seats }}</strong>
+            <strong class="stat-value">{{ group.accepted_cnt }} / {{ group.total_seats - group.accepted_cnt }}</strong>
           </div>
 
-          <div class="stat-box stat-highlight">
+          <div *ngIf="group.applications[0].trip.creator.id !== currentUserId" class="stat-box stat-highlight">
             <span class="stat-label">Your Price</span>
             <strong class="stat-value">{{ group.cost_per_person | currency:'KZT':'symbol-narrow':'1.0-0' }}</strong>
           </div>
