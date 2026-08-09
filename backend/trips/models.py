@@ -9,7 +9,7 @@ class Trip(models.Model):
     departure_date = models.DateField()
     return_date = models.DateField(null=True, blank=True)
     application_deadline = models.DateField()
-    total_cost = models.DecimalField(max_digits=10, decimal_places=2)
+    cost_per_person = models.DecimalField(max_digits=10, decimal_places=2)
     total_seats = models.PositiveIntegerField(default=4)
     
     is_available = models.BooleanField(default=True)   #доступность поездки

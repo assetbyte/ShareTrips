@@ -12,7 +12,7 @@ class TripSerializer(serializers.ModelSerializer):
     total_seats = serializers.IntegerField(required=False)
     
     accepted_cnt = serializers.SerializerMethodField()
-    cost_per_person = serializers.SerializerMethodField()
+    cost_per_person = serializers.ReadOnlyField()
     
     class Meta:
         model = Trip
