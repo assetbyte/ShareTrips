@@ -1,5 +1,6 @@
-from datetime import date, timezone
+from datetime import date, timezone, timedelta
 import json
+import time
 
 import stripe
 from django.conf import settings
@@ -9,10 +10,13 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.decorators import action
-from django.db.models import Q  #сложные фильтры 
-import time
+from django.db.models import Q
 from django.core.exceptions import PermissionDenied, ValidationError
+from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
+
 stripe.api_key = settings.STRIPE_SECRET_KEY
+
 from .models import Trip, TripApplication
 from .serializers import (
     TripApplicationCreateSeriazlier, 
@@ -20,8 +24,8 @@ from .serializers import (
     TripCreateSerializer, 
     TripSerializer
 )
-from django.views.decorators.csrf import csrf_exempt
-from django.utils import timezone
+
+
 @csrf_exempt
 def stripe_webhook(request):
     payload = request.body
@@ -46,8 +50,6 @@ def stripe_webhook(request):
 
     if event['type'] == 'checkout.session.completed':
         session = event['data']['object']
-        
-
         session_id = session.id
         
         try:
@@ -55,16 +57,14 @@ def stripe_webhook(request):
             
             if not application.is_paid:
                 application.is_paid = True
-                application.status = "accepted"
+                application.status = "accepted"  # После успешной оплаты статус становится полностью accepted
                 application.save()
-                print(f" Stripe Webhook Application {application.id} successfully marked as paid.")
+                print(f"Stripe Webhook: Application {application.id} successfully marked as paid.")
                 
         except TripApplication.DoesNotExist:
-            print(f" Stripe Webhook Application with session {session_id} not found.")
+            print(f"Stripe Webhook: Application with session {session_id} not found.")
             
     return HttpResponse(status=200)
-    
-    
 
 
 class TripViewSet(viewsets.ModelViewSet):
@@ -72,8 +72,6 @@ class TripViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         today = date.today()
-        
-        #показываем еще те поездки которые еще не начались
         queryset = Trip.objects.filter(departure_date__gt=today).order_by('-departure_date')
         
         departure_from = self.request.query_params.get("from")
@@ -86,7 +84,6 @@ class TripViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(total_cost__gte=min_price)
         if max_price:
             queryset = queryset.filter(total_cost__lte=max_price)
-        
         if departure_from:
             queryset = queryset.filter(departure_from__icontains=departure_from)
         if departure_to:
@@ -94,7 +91,6 @@ class TripViewSet(viewsets.ModelViewSet):
         if departure_date:
             queryset = queryset.filter(departure_date=departure_date)
             
-               
         return queryset 
 
     def get_serializer_class(self):
@@ -109,8 +105,7 @@ class TripViewSet(viewsets.ModelViewSet):
         if instance.creator != self.request.user:
             raise PermissionDenied("Trip could be deleted only by the creator! Not allowed!")
         if instance.applications.filter(status="accepted").exists():
-            raise ValidationError("You cannot delete a trip if it has a travelers!")
-        
+            raise ValidationError("You cannot delete a trip if it has travelers!")
         else:
             instance.delete()
 
@@ -126,13 +121,13 @@ class TripApplicationViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(applier=self.request.user)
         
-    
     def perform_destroy(self, instance):
         if instance.applier != self.request.user:
             raise PermissionDenied("You can only delete your own travel requests!")
         instance.delete()
             
     def get_queryset(self):
+        # Автоматическая прочистка просроченных дедлайнов оплаты
         expired_apps = TripApplication.objects.filter(
             status='waiting_payment',
             payment_deadline__lt=timezone.now()
@@ -144,27 +139,25 @@ class TripApplicationViewSet(viewsets.ModelViewSet):
                 app.status = 'rejected'
                 app.save()
                 if not trip.is_available:
-                    trip.is_available = True #после кика можно снова открыть поездку
+                    trip.is_available = True
                     trip.save()
 
         user = self.request.user
         return TripApplication.objects.filter(
             Q(applier=user) | Q(trip__creator=user)
         ).distinct().order_by('applied_at')
-    # заявки, где я пассажир (чекнуть свои заявки)
-    # ИЛИ
-    # заявки, присланные на мои поездки (одобрить или отклонить)
+
     @action(detail=True, methods=['post'], url_path='accept')
     def accept_application(self, request, pk=None):
         application = self.get_object()
-    
+
         if application.trip.creator != request.user:
             return Response(
                 {"detail": "You are not the creator of this trip!"}, 
                 status=status.HTTP_403_FORBIDDEN
             )
             
-        if application.status != 'pending':
+        if application.status.lower() != 'pending':
             return Response(
                 {"detail": "You can only accept pending applications!"}, 
                 status=status.HTTP_400_BAD_REQUEST
@@ -181,18 +174,19 @@ class TripApplicationViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
             
-        # Включаем таймер на 1 час
         application.status = 'waiting_payment'
         application.payment_deadline = timezone.now() + timedelta(hours=1)
         application.save()
         
-        if occupied_seats + 1 == application.trip.total_seats:
+        if occupied_seats + 1 >= application.trip.total_seats:
             application.trip.is_available = False
             application.trip.save()
             
-        return Response({"status": "application accepted, waiting for payment"}, status=status.HTTP_200_OK)
+        return Response({
+            "status": "waiting_payment",
+            "message": "Application accepted, waiting for payment"
+        }, status=status.HTTP_200_OK)
         
-    
     @action(detail=True, methods=['post'], url_path='payment')
     def pay_application(self, request, pk=None):
         application = self.get_object()
@@ -203,9 +197,10 @@ class TripApplicationViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_403_FORBIDDEN
             )
         
-        if application.status != 'accepted':
+        
+        if application.status not in ['waiting_payment', 'accepted']:
             return Response(
-                {"detail": "You can only pay for accepted applications!"}, 
+                {"detail": "You can only pay for applications that are waiting for payment!"}, 
                 status=status.HTTP_400_BAD_REQUEST
             )
             
@@ -217,7 +212,7 @@ class TripApplicationViewSet(viewsets.ModelViewSet):
         
         try:
             seats = application.trip.total_seats if application.trip.total_seats > 0 else 1
-            stripe_amount = int((application.trip.total_cost * 100) / seats) #drivers are not paying
+            stripe_amount = int((application.trip.total_cost * 100) / seats)
             
             checkout_session = stripe.checkout.Session.create(
                 payment_method_types=['card'],
@@ -246,7 +241,6 @@ class TripApplicationViewSet(viewsets.ModelViewSet):
             application.save()
             return Response({"stripe_url": checkout_session.url}, status=status.HTTP_200_OK)
             
-        
         except Exception as e:
             return Response({"detail": f"Stripe error: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
@@ -270,20 +264,23 @@ class TripApplicationViewSet(viewsets.ModelViewSet):
         serializer = TripApplicationSerializer(orders, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
-    
     @action(detail=False, methods=['get'], url_path='my_team')
     def my_team(self, request):
         user = request.user
         
         driver_trips = Trip.objects.filter(creator=user)
         
-        passenger_trips = Trip.objects.filter(applications__applier=user, applications__status="accepted")
+        
+        passenger_trips = Trip.objects.filter(
+            applications__applier=user, 
+            applications__status__in=["accepted", "waiting_payment"]
+        )
     
         accessible_trips = (driver_trips | passenger_trips).distinct()
     
         team = TripApplication.objects.filter(
             trip__in=accessible_trips,
-            status="accepted"
+            status__in=["accepted", "waiting_payment"]
         ).order_by("-applied_at")
         
         serializer = TripApplicationSerializer(team, many=True, context={'request': request})
@@ -294,16 +291,12 @@ class TripApplicationViewSet(viewsets.ModelViewSet):
         application = self.get_object()
         
         if application.trip.creator != request.user:
-            return Response({"detail": "You are not allowed to kick anyone from this trip!"}, 
+            return Response(
+                {"detail": "You are not allowed to kick anyone from this trip!"}, 
                 status=status.HTTP_403_FORBIDDEN
             )
             
-        
         application.status = "kicked"
         application.save()
             
         return Response({"status": "teammate kicked successfully"}, status=status.HTTP_200_OK)
-                    
-            
-        
-    

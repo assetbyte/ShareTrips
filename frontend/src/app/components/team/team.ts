@@ -10,6 +10,7 @@ import { HttpClient } from '@angular/common/http';
 
 export interface GroupedTrip {
   tripId: number;
+  total_seats: number;
   departure_from: string;
   departure_to: string;
   departure_date: string;
@@ -58,7 +59,7 @@ export class Team implements OnInit {
     const groups: { [key: number]: GroupedTrip } = {};
 
     applications.forEach(app => {
-      if (app.status === 'accepted') {
+      if (app.status === 'accepted' || app.status === 'waiting_payment') {
         const tripId = app.trip.id;
         if (!groups[tripId]) {
           groups[tripId] = {
@@ -70,6 +71,7 @@ export class Team implements OnInit {
             total_cost: Number(app.trip.total_cost),
             accepted_cnt: app.trip.accepted_cnt,
             cost_per_person: app.trip.cost_per_person,
+            total_seats: app.trip.total_seats,
             applications: []
           };
         }
@@ -80,7 +82,7 @@ export class Team implements OnInit {
     this.groupedTrips = Object.values(groups);
   }
 
-   onSimulatedPay(group: GroupedTrip): void {
+  onSimulatedPay(group: GroupedTrip): void {
     const myApplication = group.applications.find(
       app => app.applier.id === this.currentUserId
     );
@@ -90,28 +92,28 @@ export class Team implements OnInit {
       return;
     }
 
-  const token = this.authService.getToken(); 
+    const token = this.authService.getToken(); 
 
-  const headers = {
-    'Authorization': `Token ${token}` 
-  };
+    const headers = {
+      'Authorization': `Token ${token}` 
+    };
 
-  this.http.post<{ stripe_url: string }>(
-    `http://localhost:8000/api/applications/${myApplication.id}/payment/`, 
-    {},
-    { headers } 
-  ).subscribe({
-    next: (response) => {
-      if (response && response.stripe_url) {
-        window.location.href = response.stripe_url;
+    this.http.post<{ stripe_url: string }>(
+      `http://localhost:8000/api/applications/${myApplication.id}/payment/`, 
+      {},
+      { headers } 
+    ).subscribe({
+      next: (response) => {
+        if (response && response.stripe_url) {
+          window.location.href = response.stripe_url;
+        }
+      },
+      error: (err: any) => {
+        console.error(err);
+        alert(err.error?.detail || 'Unauthorized or error occurred.');
       }
-    },
-    error: (err: any) => {
-      console.error(err);
-      alert(err.error?.detail || 'Unauthorized or error occurred.');
-    }
-  });
-}
+    });
+  }
 
   openReviewDialog(tripId: number, receiver: any): void {
     const dialogRef = this.dialog.open(ReviewDialog, {

@@ -16,7 +16,13 @@
                               app.status === 'rejected' || app.status === 'kicked' ? '#dc3545' : '#ffc107',
           'color': app.status === 'pending' ? '#000' : '#fff'
         }" style="padding: 5px 10px; border-radius: 4px; font-size: 12px; position: absolute; top: 15px; right: 15px; text-transform: uppercase; font-weight: bold;">
-          Your Application status: {{ app.status }}
+          Status: {{ 
+            app.status === 'waiting_payment' ? 'Waiting for Payment' :
+            app.status === 'accepted' ? 'Accepted' :
+            app.status === 'rejected' ? 'Rejected' :
+            app.status === 'kicked' ? 'Kicked' :
+            app.status === 'pending' ? 'Pending' : app.status
+          }}
         </span>
 
         <h3 style="margin: 0 0 10px 0; color: #333; max-width: 70%;">

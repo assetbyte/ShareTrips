@@ -33,6 +33,8 @@ export class Applications implements OnInit {
         console.error('Error loading passenger applications:', err);
       }
     });
+
+    
   }
 
   onAccept(appId: number) {
@@ -41,6 +43,7 @@ export class Applications implements OnInit {
         alert('Passenger added to the team succefully');
         const app = this.incomingApplications.find(a => a.id === appId);
         if (app) app.status = 'accepted';
+        
         this.cdr.detectChanges();
       },
       error: (err) => console.error('Error accepting application:', err)
