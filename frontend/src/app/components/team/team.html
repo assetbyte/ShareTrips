@@ -122,17 +122,17 @@
 
         <div class="financial-stats">
           <div class="stat-box">
-            <span class="stat-label">Total Cost</span>
-            <strong class="stat-value">{{ group.total_cost | currency:'KZT':'symbol-narrow':'1.0-0' }}</strong>
+            <span class="stat-label">Price per Seat</span>
+            <strong class="stat-value">{{ group.cost_per_person | currency:'KZT':'symbol-narrow':'1.0-0' }}</strong>
           </div>
 
           <div class="stat-box">
-            <span class="stat-label">Amount of people who paid</span>
-            <strong class="stat-value">{{group.accepted_cnt }} </strong>
+            <span class="stat-label">People Paid</span>
+            <strong class="stat-value">{{ group.accepted_cnt }} / {{ group.total_seats }}</strong>
           </div>
 
           <div class="stat-box stat-highlight">
-            <span class="stat-label">Your Share</span>
+            <span class="stat-label">Your Price</span>
             <strong class="stat-value">{{ group.cost_per_person | currency:'KZT':'symbol-narrow':'1.0-0' }}</strong>
           </div>
         </div>

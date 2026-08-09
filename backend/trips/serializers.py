@@ -18,7 +18,7 @@ class TripSerializer(serializers.ModelSerializer):
         model = Trip
         fields = [
             'id', 'creator', 'departure_from', 'departure_to', 
-            'departure_date', 'return_date', 'total_cost', 
+            'departure_date', 'return_date',  
             'total_seats', 'remaining_seats', 'application_deadline',
             'status',
             'accepted_cnt', 'cost_per_person'  
