@@ -197,8 +197,7 @@
           >
              Delete Trip
           </button>
-
-          <div *ngIf="authService.isLoggedIn()">
+          <div *ngIf="authService.isLoggedIn() && currentUserId !== trip.creator.id">
             <button (click)="onApply(trip.id)" 
                     [disabled]="trip.remaining_seats === 0 || trip.status === 'Trip is going on' || trip.status === 'Trip has ended'"
                     [ngClass]="{
@@ -218,12 +217,12 @@
           </div>
 
           <div *ngIf="!authService.isLoggedIn()" class="unauth-apply-block">
-            <button disabled class="btn btn-unauth">    
+            <button *ngIf="" disabled class="btn btn-unauth">    
               Join the trip
             </button>
             <small class="error-text">Please log in to join this trip</small>
           </div>
-        </div> 
+        </div>
 
         <div *ngIf="errorMessage[trip.id]" class="error-banner">
           <span>{{ errorMessage[trip.id] }}</span>

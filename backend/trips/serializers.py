@@ -98,6 +98,9 @@ class TripApplicationCreateSeriazlier(serializers.ModelSerializer):
         
         current_trip = attrs.get('trip')
         
+        if current_trip.creator == user:
+            raise ValidationError("You cannot apply to your own trip!")
+        
         
         if not user:
             return attrs
