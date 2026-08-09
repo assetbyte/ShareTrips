@@ -45,7 +45,7 @@ export class Home implements OnInit {
     departure_date: '',
     return_date: '',
     application_deadline: '',
-    total_cost: 0,
+    cost_per_person: 0,
 
     total_seats: 4
   };
@@ -98,7 +98,7 @@ export class Home implements OnInit {
   
       if (this.trips.length > 0) {
   
-        const prices = this.trips.map(trip => trip.total_cost);
+        const prices = this.trips.map(trip => trip.cost_per_person);
         
         const computedMin = Math.min(...prices);
         const computedMax = Math.max(...prices);
@@ -163,7 +163,7 @@ export class Home implements OnInit {
           departure_date: '',
           return_date: '',
           application_deadline: '',
-          total_cost: 0,
+          cost_per_person: 0,
           total_seats: 4
         };
         this.executeSearch(this.searchFrom, this.searchTo);

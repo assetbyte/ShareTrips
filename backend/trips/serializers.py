@@ -31,13 +31,7 @@ class TripSerializer(serializers.ModelSerializer):
         accepted_passengers = self.get_accepted_cnt(obj)
         return obj.total_seats - accepted_passengers
 
-    def get_cost_per_person(self, obj):
-        accepted_passengers = self.get_accepted_cnt(obj)
-        
-        
-        total_people = 1 + accepted_passengers
     
-        return round(obj.total_cost / total_people, 0) 
 #post создать поездку      
 class TripCreateSerializer(serializers.ModelSerializer):
     return_date = serializers.DateField(required=False, allow_null=True)

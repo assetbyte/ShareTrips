@@ -98,8 +98,8 @@
       </div>
 
       <div class="field-group">
-        <label>Total cost (₸):</label>
-        <input type="number" [(ngModel)]="newTrip.total_cost" placeholder="0" class="form-input">
+        <label>Cost per seat (₸):</label>
+        <input type="number" [(ngModel)]="newTrip.cost_per_person" placeholder="0" class="form-input">
       </div>
 
       <div class="field-group">
@@ -180,7 +180,7 @@
           <p><strong class="label">Departure date:</strong> {{ trip.departure_date | date:'dd.MM.yyyy' }}</p>
           <p *ngIf="trip.return_date"><strong class="label">Return date:</strong> {{ trip.return_date | date:'dd.MM.yyyy' }}</p>
           <p><strong class="label">Deadline for applications:</strong> {{ trip.application_deadline | date:'dd.MM.yyyy' }}</p>
-          <p><strong class="label">Cost:</strong> <span class="cost-value">{{ trip.total_cost }} ₸</span></p>
+          <p><strong class="label">Cost:</strong> <span class="cost-value">{{ trip.cost_per_person }} ₸</span></p>
           <p>
             <strong class="label">Publisher:</strong> 
             <span [routerLink]="['/my-profile', trip.creator.id]" class="creator-link" title="View profile">
