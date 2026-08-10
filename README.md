@@ -1,6 +1,6 @@
 # Carpooling & Ridesharing Platform
 
-![Status](https://img.shields.io/badge/status-active-success.svg)
+![Status](https://img.shields.io/badge/status-active--development-yellow.svg)
 ![Build](https://img.shields.io/badge/build-passing-brightgreen.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Python](https://img.shields.io/badge/python-3.12-blue.svg)
@@ -135,7 +135,7 @@ Application will run at: `http://localhost:4200/`
 
 ---
 
-## 🧪 Development & Testing
+## Development & Testing
 
 ### Backend Unit Tests
 
