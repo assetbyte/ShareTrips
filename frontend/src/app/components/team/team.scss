@@ -412,3 +412,28 @@
     }
   }
 }
+
+.user-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-weight: 600;
+
+  .payment-badge {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 500;
+
+    &.paid {
+      background-color: #e6f4ea;
+      color: #137333;
+    }
+
+    &.unpaid {
+      background-color: #fce8e6;
+      color: #c5221f;
+    }
+  }
+}

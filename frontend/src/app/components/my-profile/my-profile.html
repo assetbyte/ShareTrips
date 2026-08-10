@@ -103,7 +103,7 @@
               <p><strong>Departure:</strong> {{ trip.departure_date | date:'dd.MM.yyyy' }}</p>
               <p *ngIf="trip.return_date"><strong>Return:</strong> {{ trip.return_date | date:'dd.MM.yyyy' }}</p>
               <p><strong>Seats left:</strong> {{ trip.remaining_seats }} / {{ trip.total_seats }}</p>
-              <p><strong>Price:</strong> {{ trip.total_cost }} KZT</p>
+              <p><strong>Cost per person:</strong> {{ trip.cost_per_person }} KZT</p>
             </div>
           </div>
         </div>
@@ -139,7 +139,7 @@
                 </span>
               </p>
               <p><strong>Departure Date:</strong> {{ trip.departure_date | date:'dd.MM.yyyy' }}</p>
-              <p><strong>Price:</strong> {{ trip.total_cost }} KZT</p>
+              <p><strong>Cost per person:</strong> {{ trip.cost_per_person }} KZT</p>
             </div>
           </div>
         </div>

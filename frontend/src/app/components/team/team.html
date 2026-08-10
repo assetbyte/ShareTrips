@@ -10,12 +10,20 @@
 
   <div *ngFor="let group of groupedTrips" class="trip-card">
     
-
     <div class="card-header">
       <h3 class="route-title">
         {{ group.departure_from }} <span class="arrow">➔</span> {{ group.departure_to }}
       </h3>
+
       
+      <div class="trip-creator-badge" 
+           [routerLink]="['/my-profile', group.applications[0]?.trip?.creator?.id]"
+           style="display: inline-flex; align-items: center; gap: 8px; background: #eff6ff; border: 1px solid #bfdbfe; padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: background 0.2s ease; margin: 8px 0;"
+          >
+        <span style="font-size: 13px; color: #1e40af; font-weight: 500;">Driver:</span>
+        <span style="font-size: 14px; color: #2563eb; font-weight: 700;">@{{ group.applications[0]?.trip?.creator?.username }}</span>
+      </div>
+
       <div class="header-actions">
         <span class="status-badge" [class.status-finished]="group.status === 'Trip has ended'">
           {{ group.status === 'Trip has ended' ? 'Finished' : (group.departure_date | date:'dd.MM.yyyy') }}
@@ -56,22 +64,36 @@
         Teammates ({{ group.applications.length }}):
       </h4>
 
+      
+
+
       <div class="teammates-grid">
         <div *ngFor="let app of group.applications" class="teammate-row">
           
           <div class="user-info">
-            <div class="avatar avatar-passenger">
-              {{ app.applier.username.substring(0, 2).toUpperCase() }}
-            </div>
-            <div class="user-details">
-              <p class="user-name">
-                <span [routerLink]="['/my-profile', app.applier.id]" class="user-link">
-                  &#64;{{ app.applier.username }}
-                </span>
-              </p>
-              <small class="applied-date">Applied: {{ app.applied_at | date:'dd.MM.yyyy HH:mm' }}</small>
-            </div>
-          </div>
+        <div class="avatar avatar-passenger">
+          {{ app.applier.username.substring(0, 2).toUpperCase() }}
+        </div>
+
+        <div class="user-details">
+          <p class="user-name">
+            <span [routerLink]="['/my-profile', app.applier.id]" class="user-link">
+              &#64;{{ app.applier.username }}
+            </span>
+
+
+            <span 
+              class="payment-badge" 
+              [class.paid]="app.is_paid" 
+              [class.unpaid]="!app.is_paid"
+            >
+              {{ app.is_paid ? 'Paid' : 'Not Paid' }}
+            </span>
+          </p>
+
+          <small class="applied-date">Applied: {{ app.applied_at | date:'dd.MM.yyyy HH:mm' }}</small>
+        </div>
+        </div>
 
           <div class="actions-group">
             <ng-container *ngIf="group.status !== 'Trip has ended'">
@@ -80,7 +102,7 @@
               </span>
 
               <div *ngIf="app.status === 'waiting_payment'" class="payment-timer-block">
-                <span class="timer-label">Pay within:</span>
+                <span class="timer-label">Deadline for payment:</span>
                 <strong class="timer-value text-danger">
                   {{ timeRemainingMap[app.id] || 'Loading...' }}
                 </strong>

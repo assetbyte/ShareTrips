@@ -49,7 +49,7 @@
 
           <p style="margin: 5px 0;"><strong>Departure date:</strong> {{ app.trip.departure_date | date:'dd.MM.yyyy' }}</p>
           <p style="margin: 5px 0;"><strong>Publisher:</strong> <span style="color: #007bff; cursor: pointer; border-bottom: 1px dashed #007bff;" [routerLink]="['/my-profile', app.trip.creator.id]"> @{{ app.trip.creator.username }}</span></p>
-          <p style="margin: 5px 0;"><strong>Cost:</strong> {{ app.trip.total_cost }} KZT</p>
+          <p style="margin: 5px 0;"><strong>Cost per person:</strong> {{ app.trip.cost_per_person }} KZT</p>
           
           <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid #fafafa;">
             <small style="color: #999;">Applied at: {{ app.applied_at | date:'dd.MM.yyyy в HH:mm' }}</small>
