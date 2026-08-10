@@ -127,16 +127,16 @@ class TripApplicationViewSet(viewsets.ModelViewSet):
         instance.delete()
             
     def get_queryset(self):
-        # Автоматическая прочистка просроченных дедлайнов оплаты
+        
         expired_apps = TripApplication.objects.filter(
             status='waiting_payment',
             payment_deadline__lt=timezone.now()
         )
         
-        if expired_apps.exists():
+        if expired_apps.exists(): # просрочка
             for app in expired_apps:
                 trip = app.trip
-                app.status = 'rejected'
+                app.status = 'rejected' 
                 app.save()
                 if not trip.is_available:
                     trip.is_available = True

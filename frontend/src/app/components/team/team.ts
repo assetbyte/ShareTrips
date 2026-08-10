@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
+import { Component, ChangeDetectorRef, OnInit, OnDestroy } from '@angular/core';
 import { TripService } from '../../services/trip';
 import { Auth } from '../../services/auth'; 
 import { CommonModule } from '@angular/common';
@@ -28,9 +28,13 @@ export interface GroupedTrip {
   templateUrl: './team.html',
   styleUrl: './team.scss',
 })
-export class Team implements OnInit {
+export class Team implements OnInit, OnDestroy {
   groupedTrips: GroupedTrip[] = [];
   currentUserId: number | null = null; 
+
+  
+  private timers: { [appId: number]: any } = {};
+  timeRemainingMap: { [appId: number]: string } = {};
 
   constructor(
     private tripService: TripService, 
@@ -47,12 +51,18 @@ export class Team implements OnInit {
     this.tripService.getMyTeam().subscribe({
       next: (data: any[]) => {
         this.groupApplications(data);
+        this.initTimersForWaitingApps();
         this.cdr.detectChanges();
       },
       error: (err: any) => { 
         console.error('Error fetching team data:', err);
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    
+    Object.values(this.timers).forEach(timer => clearInterval(timer));
   }
 
   groupApplications(applications: any[]): void {
@@ -68,7 +78,7 @@ export class Team implements OnInit {
             departure_to: app.trip.departure_to,
             departure_date: app.trip.departure_date,
             status: app.trip.status,
-            total_cost: Number(app.trip.total_cost),
+            total_cost: Number(app.trip.total_cost || 0),
             accepted_cnt: app.trip.accepted_cnt,
             cost_per_person: app.trip.cost_per_person,
             total_seats: app.trip.total_seats,
@@ -80,6 +90,48 @@ export class Team implements OnInit {
     });
 
     this.groupedTrips = Object.values(groups);
+  }
+
+  
+
+  initTimersForWaitingApps(): void {
+    this.groupedTrips.forEach(group => {
+      group.applications.forEach(app => {
+        if (app.status === 'waiting_payment' && app.payment_deadline) {
+          this.startCountdown(app.id, app.payment_deadline);
+        }
+      });
+    });
+  }
+
+  startCountdown(appId: number, deadlineString: string): void { // для каждого приложения у которого статус "waiting_payment" запускаем таймер
+    const deadlineTime = new Date(deadlineString).getTime();
+    
+    if (this.timers[appId]) {
+      clearInterval(this.timers[appId]);
+    }
+
+    this.timers[appId] = setInterval(() => {
+      const now = new Date().getTime();
+      const distance = deadlineTime - now;
+
+      if (distance < 0) {
+        this.timeRemainingMap[appId] = 'Expired';
+        clearInterval(this.timers[appId]);
+  
+        this.cdr.detectChanges();
+        return;
+      }
+
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      this.timeRemainingMap[appId] = 
+        `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      
+      this.cdr.detectChanges();
+    }, 1000);
   }
 
   onSimulatedPay(group: GroupedTrip): void {
@@ -153,6 +205,10 @@ export class Team implements OnInit {
           console.log("Teammate kicked successfully", data);
           alert("Teammate kicked successfully!");
           
+          if (this.timers[teammateId]) {
+            clearInterval(this.timers[teammateId]);
+          }
+
           const tripGroup = this.groupedTrips.find(g => g.tripId === tripId);
           if (tripGroup) {
             tripGroup.applications = tripGroup.applications.filter(app => app.id !== teammateId);
@@ -175,6 +231,10 @@ export class Team implements OnInit {
           console.log("You left team successfully");
           alert("You left the team!");
           
+          if (this.timers[applcationId]) {
+            clearInterval(this.timers[applcationId]);
+          }
+
           const tripGroup = this.groupedTrips.find(g => g.tripId === tripId);
           if (tripGroup){
             tripGroup.applications = tripGroup.applications.filter(app => app.id !== applcationId);
