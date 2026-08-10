@@ -176,5 +176,5 @@ ng build --configuration production
 **Asset Abdirakhman** — *Full-Stack Developer*
 
 * **GitHub:** [@assetbyte](https://github.com/assetbyte)
-* **Email:** [asetabdrahman3@gmail.com](mailto:asetabdrakhman3@gmail.com)
+* **Email:** [asetabdrahman3@gmail.com](mailto:asetabdrahman3@gmail.com)
 
